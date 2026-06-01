@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -5,1335 +7,542 @@
 <title>ChatDrama Studio</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:ital,wght@0,300;0,400;0,500;1,300&display=swap" rel="stylesheet">
-<script src="https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.js"></script>
 <style>
-  :root {
-    --bg: #0a0a0f;
-    --surface: #111118;
-    --surface2: #18181f;
-    --surface3: #1e1e28;
-    --border: rgba(255,255,255,0.06);
-    --accent: #7c5cfc;
-    --accent2: #c084fc;
-    --accent-glow: rgba(124,92,252,0.3);
-    --text: #f0f0f5;
-    --text-muted: #6b6b80;
-    --text-dim: #9090a8;
-    --green: #25d366;
-    --blue: #1d8af8;
-    --success: #22c55e;
-    --wa-bg: #0b141a;
-    --wa-chat-bg: #111b21;
-    --wa-sent: #005c4b;
-    --wa-received: #202c33;
-    --wa-header: #1f2c34;
-    --wa-input: #1f2c34;
-    --im-bg: #ffffff;
-    --im-sent: #1d8af8;
-    --im-received: #e9e9eb;
-    --im-header: #f2f2f7;
-  }
-
-- { margin: 0; padding: 0; box-sizing: border-box; }
-
-html, body {
-height: 100%;
+:root {
+  --bg:#0a0a0f; --surface:#111118; --surface2:#18181f; --surface3:#1e1e28;
+  --border:rgba(255,255,255,0.06); --accent:#7c5cfc; --accent2:#c084fc;
+  --accent-glow:rgba(124,92,252,0.3); --text:#f0f0f5; --text-muted:#6b6b80;
+  --text-dim:#9090a8; --success:#22c55e;
 }
-
-body {
-font-family: ‘DM Sans’, sans-serif;
-background: var(–bg);
-color: var(–text);
-min-height: 100vh;
-overflow-x: hidden;
-/* IMPORTANT: must NOT have overflow:hidden or overflow:auto on body/html
-or position:sticky on children won’t work */
-}
-
-/* Ambient background */
-body::before {
-content: ‘’;
-position: fixed;
-top: -40%;
-left: -20%;
-width: 600px;
-height: 600px;
-background: radial-gradient(circle, rgba(124,92,252,0.12) 0%, transparent 70%);
-pointer-events: none;
-z-index: 0;
-}
-body::after {
-content: ‘’;
-position: fixed;
-bottom: -20%;
-right: -10%;
-width: 500px;
-height: 500px;
-background: radial-gradient(circle, rgba(192,132,252,0.08) 0%, transparent 70%);
-pointer-events: none;
-z-index: 0;
-}
-
-.app-wrapper {
-position: relative;
-z-index: 1;
-max-width: 1400px;
-margin: 0 auto;
-padding: 0 24px 60px;
-}
-
-/* HEADER */
-header {
-display: flex;
-align-items: center;
-justify-content: space-between;
-padding: 28px 0 40px;
-border-bottom: 1px solid var(–border);
-margin-bottom: 40px;
-}
-
-.logo {
-display: flex;
-align-items: center;
-gap: 12px;
-}
-
-.logo-icon {
-width: 40px;
-height: 40px;
-background: linear-gradient(135deg, var(–accent), var(–accent2));
-border-radius: 12px;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 18px;
-box-shadow: 0 0 20px var(–accent-glow);
-}
-
-.logo-text {
-font-family: ‘Syne’, sans-serif;
-font-weight: 800;
-font-size: 20px;
-background: linear-gradient(135deg, #f0f0f5, #9090a8);
--webkit-background-clip: text;
--webkit-text-fill-color: transparent;
-background-clip: text;
-}
-
-.logo-sub {
-font-size: 11px;
-font-weight: 500;
-color: var(–accent2);
-letter-spacing: 2px;
-text-transform: uppercase;
-}
-
-.header-badge {
-background: var(–surface2);
-border: 1px solid var(–border);
-padding: 6px 14px;
-border-radius: 20px;
-font-size: 12px;
-color: var(–text-muted);
-display: flex;
-align-items: center;
-gap: 6px;
-}
-.header-badge span { color: var(–success); }
-
-/* PHASE TABS */
-.phase-tabs {
-display: flex;
-gap: 4px;
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 14px;
-padding: 5px;
-margin-bottom: 36px;
-width: fit-content;
-}
-
-.phase-tab {
-padding: 10px 24px;
-border-radius: 10px;
-font-family: ‘Syne’, sans-serif;
-font-weight: 600;
-font-size: 13px;
-cursor: pointer;
-border: none;
-background: transparent;
-color: var(–text-muted);
-transition: all 0.2s;
-display: flex;
-align-items: center;
-gap: 8px;
-letter-spacing: 0.3px;
-}
-
-.phase-tab.active {
-background: linear-gradient(135deg, var(–accent), var(–accent2));
-color: white;
-box-shadow: 0 4px 16px var(–accent-glow);
-}
-
-.phase-tab:not(.active):hover {
-color: var(–text);
-background: var(–surface2);
-}
-
-.phase-number {
-width: 20px;
-height: 20px;
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-size: 11px;
-font-weight: 700;
-background: rgba(255,255,255,0.15);
-}
-
-/* PANELS */
-.phase-panel { display: none; }
-.phase-panel.active { display: block; }
-
-/* TWO COLUMN LAYOUT - Phase 1 */
-.two-col {
-display: grid;
-grid-template-columns: 1fr 1fr;
-gap: 24px;
-align-items: start;
-}
-
-@media (max-width: 900px) {
-.two-col { grid-template-columns: 1fr; }
-.phone-col { order: -1; }
-}
-
-/* PHASE 2 SPLIT LAYOUT — left scrolls, right phone is fixed to viewport */
-.phase2-split {
-display: flex;
-gap: 0;
-align-items: flex-start;
-min-height: calc(100vh - 160px);
-}
-
-.phase2-left {
-flex: 1;
-min-width: 0;
-padding-right: 28px;
-/* Scrollable independently */
-}
-
-.phase2-right {
-width: 360px;
-flex-shrink: 0;
-position: sticky;
-top: 20px;
-align-self: flex-start;
-/* Sticks to viewport top while left column scrolls */
-}
-
-@media (max-width: 900px) {
-.phase2-split { flex-direction: column; }
-.phase2-right { position: static; width: 100%; display: flex; justify-content: center; }
-.phase2-left { padding-right: 0; }
-}
-
-/* CARD */
-.card {
-background: var(–surface);
-border: 1px solid var(–border);
-border-radius: 18px;
-padding: 24px;
-}
-
-.card-title {
-font-family: ‘Syne’, sans-serif;
-font-weight: 700;
-font-size: 15px;
-color: var(–text);
-margin-bottom: 4px;
-display: flex;
-align-items: center;
-gap: 8px;
-}
-
-.card-desc {
-font-size: 12px;
-color: var(–text-muted);
-margin-bottom: 20px;
-line-height: 1.6;
-}
-
-/* FORM ELEMENTS */
-label {
-display: block;
-font-size: 11px;
-font-weight: 500;
-color: var(–text-dim);
-text-transform: uppercase;
-letter-spacing: 1px;
-margin-bottom: 8px;
-}
-
-input[type=“text”], textarea, select {
-width: 100%;
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 10px;
-color: var(–text);
-font-family: ‘DM Sans’, sans-serif;
-font-size: 14px;
-padding: 12px 14px;
-outline: none;
-transition: border-color 0.2s, box-shadow 0.2s;
-resize: none;
-appearance: none;
-}
-
-input[type=“text”]:focus, textarea:focus, select:focus {
-border-color: var(–accent);
-box-shadow: 0 0 0 3px rgba(124,92,252,0.15);
-}
-
-select {
-cursor: pointer;
-background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘12’ height=‘12’ viewBox=‘0 0 12 12’%3E%3Cpath fill=’%236b6b80’ d=‘M6 8L1 3h10z’/%3E%3C/svg%3E”);
-background-repeat: no-repeat;
-background-position: right 14px center;
-padding-right: 36px;
-}
-
-.form-group { margin-bottom: 18px; }
-
-/* FRAMEWORK CARDS */
-.framework-grid {
-display: grid;
-grid-template-columns: 1fr;
-gap: 8px;
-margin-bottom: 18px;
-}
-
-.framework-option {
-position: relative;
-cursor: pointer;
-}
-
-.framework-option input { display: none; }
-
-.framework-card {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 14px 16px;
-cursor: pointer;
-transition: all 0.2s;
-display: flex;
-flex-direction: column;
-gap: 4px;
-}
-
-.framework-option input:checked + .framework-card {
-border-color: var(–accent);
-background: rgba(124,92,252,0.1);
-box-shadow: 0 0 0 1px var(–accent);
-}
-
-.framework-card:hover { border-color: rgba(124,92,252,0.4); }
-
-.fw-name {
-font-family: ‘Syne’, sans-serif;
-font-weight: 700;
-font-size: 13px;
-color: var(–text);
-}
-
-.fw-desc {
-font-size: 11px;
-color: var(–text-muted);
-}
-
-.fw-emoji {
-font-size: 18px;
-margin-bottom: 4px;
-}
-
-/* PROMPT OUTPUT */
-.prompt-output {
-background: var(–surface3);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 16px;
-font-size: 13px;
-line-height: 1.7;
-color: var(–text-dim);
-min-height: 160px;
-font-family: ‘DM Mono’, ‘Courier New’, monospace;
-white-space: pre-wrap;
-word-break: break-word;
-position: relative;
-}
-
-.prompt-placeholder {
-color: var(–text-muted);
-font-family: ‘DM Sans’, sans-serif;
-font-style: italic;
-font-size: 13px;
-}
-
-/* BUTTONS */
-.btn {
-display: inline-flex;
-align-items: center;
-gap: 8px;
-padding: 11px 20px;
-border-radius: 10px;
-font-family: ‘DM Sans’, sans-serif;
-font-weight: 500;
-font-size: 13px;
-cursor: pointer;
-border: none;
-transition: all 0.2s;
-text-decoration: none;
-}
-
-.btn-primary {
-background: linear-gradient(135deg, var(–accent), var(–accent2));
-color: white;
-box-shadow: 0 4px 14px var(–accent-glow);
-}
-.btn-primary:hover {
-transform: translateY(-1px);
-box-shadow: 0 6px 20px var(–accent-glow);
-}
-.btn-primary:active { transform: translateY(0); }
-
-.btn-ghost {
-background: var(–surface2);
-color: var(–text-dim);
-border: 1px solid var(–border);
-}
-.btn-ghost:hover { color: var(–text); border-color: rgba(255,255,255,0.15); }
-
-.btn-success {
-background: linear-gradient(135deg, #16a34a, #22c55e);
-color: white;
-box-shadow: 0 4px 14px rgba(34,197,94,0.3);
-}
-.btn-success:hover {
-transform: translateY(-1px);
-box-shadow: 0 6px 20px rgba(34,197,94,0.4);
-}
-
-.btn-danger {
-background: linear-gradient(135deg, #dc2626, #ef4444);
-color: white;
-box-shadow: 0 4px 14px rgba(239,68,68,0.3);
-}
-
-.btn-row {
-display: flex;
-gap: 10px;
-flex-wrap: wrap;
-margin-top: 16px;
-}
-
-/* DIVIDER */
-.divider {
-height: 1px;
-background: var(–border);
-margin: 24px 0;
-}
-
-/* THEME TOGGLE */
-.theme-toggle {
-display: flex;
-gap: 4px;
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 10px;
-padding: 4px;
-margin-bottom: 20px;
-}
-
-.theme-btn {
-flex: 1;
-padding: 9px;
-border-radius: 8px;
-font-size: 12px;
-font-weight: 600;
-font-family: ‘Syne’, sans-serif;
-cursor: pointer;
-border: none;
-color: var(–text-muted);
-background: transparent;
-transition: all 0.2s;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 6px;
-}
-
-.theme-btn.active {
-background: var(–surface3);
-color: var(–text);
-border: 1px solid var(–border);
-}
-
-/* PHONE MOCKUP */
-.phone-col {
-display: flex;
-flex-direction: column;
-align-items: center;
-gap: 20px;
-}
-
-.phone-wrapper {
-position: relative;
-width: 320px;
-filter: drop-shadow(0 40px 60px rgba(0,0,0,0.6));
-}
-
+*{margin:0;padding:0;box-sizing:border-box}
+html,body{height:100%}
+body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+body::before{content:'';position:fixed;top:-40%;left:-20%;width:600px;height:600px;background:radial-gradient(circle,rgba(124,92,252,0.12) 0%,transparent 70%);pointer-events:none;z-index:0}
+body::after{content:'';position:fixed;bottom:-20%;right:-10%;width:500px;height:500px;background:radial-gradient(circle,rgba(192,132,252,0.08) 0%,transparent 70%);pointer-events:none;z-index:0}
+.app-wrapper{position:relative;z-index:1;max-width:1400px;margin:0 auto;padding:0 24px 60px}
+header{display:flex;align-items:center;justify-content:space-between;padding:28px 0 40px;border-bottom:1px solid var(--border);margin-bottom:40px}
+.logo{display:flex;align-items:center;gap:12px}
+.logo-icon{width:40px;height:40px;background:linear-gradient(135deg,var(--accent),var(--accent2));border-radius:12px;display:flex;align-items:center;justify-content:center;font-size:18px;box-shadow:0 0 20px var(--accent-glow)}
+.logo-text{font-family:'Syne',sans-serif;font-weight:800;font-size:20px;background:linear-gradient(135deg,#f0f0f5,#9090a8);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.logo-sub{font-size:11px;font-weight:500;color:var(--accent2);letter-spacing:2px;text-transform:uppercase}
+.header-badge{background:var(--surface2);border:1px solid var(--border);padding:6px 14px;border-radius:20px;font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px}
+.header-badge span{color:var(--success)}
+.phase-tabs{display:flex;gap:4px;background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:5px;margin-bottom:36px;width:fit-content}
+.phase-tab{padding:10px 24px;border-radius:10px;font-family:'Syne',sans-serif;font-weight:600;font-size:13px;cursor:pointer;border:none;background:transparent;color:var(--text-muted);transition:all 0.2s;display:flex;align-items:center;gap:8px;letter-spacing:0.3px}
+.phase-tab.active{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 4px 16px var(--accent-glow)}
+.phase-tab:not(.active):hover{color:var(--text);background:var(--surface2)}
+.phase-number{width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;background:rgba(255,255,255,0.15)}
+.phase-panel{display:none}
+.phase-panel.active{display:block}
+.two-col{display:grid;grid-template-columns:1fr 1fr;gap:24px;align-items:start}
+.phase2-split{display:flex;gap:0;align-items:flex-start;min-height:calc(100vh - 160px)}
+.phase2-left{flex:1;min-width:0;padding-right:28px}
+.phase2-right{width:360px;flex-shrink:0;position:sticky;top:20px;align-self:flex-start}
+@media(max-width:900px){.two-col{grid-template-columns:1fr}.phase2-split{flex-direction:column}.phase2-right{position:static;width:100%;display:flex;justify-content:center}.phase2-left{padding-right:0}}
+.card{background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px}
+.card-title{font-family:'Syne',sans-serif;font-weight:700;font-size:15px;color:var(--text);margin-bottom:4px;display:flex;align-items:center;gap:8px}
+.card-desc{font-size:12px;color:var(--text-muted);margin-bottom:20px;line-height:1.6}
+label{display:block;font-size:11px;font-weight:500;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
+input[type="text"],textarea,select{width:100%;background:var(--surface2);border:1px solid var(--border);border-radius:10px;color:var(--text);font-family:'DM Sans',sans-serif;font-size:14px;padding:12px 14px;outline:none;transition:border-color 0.2s,box-shadow 0.2s;resize:none;appearance:none}
+input[type="text"]:focus,textarea:focus,select:focus{border-color:var(--accent);box-shadow:0 0 0 3px rgba(124,92,252,0.15)}
+select{cursor:pointer;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%236b6b80' d='M6 8L1 3h10z'/%3E%3C/svg%3E");background-repeat:no-repeat;background-position:right 14px center;padding-right:36px}
+.form-group{margin-bottom:18px}
+.framework-grid{display:grid;grid-template-columns:1fr;gap:8px;margin-bottom:18px}
+.framework-option{position:relative;cursor:pointer}
+.framework-option input{display:none}
+.framework-card{background:var(--surface2);border:1px solid var(--border);border-radius:12px;padding:14px 16px;cursor:pointer;transition:all 0.2s;display:flex;flex-direction:column;gap:4px}
+.framework-option input:checked+.framework-card{border-color:var(--accent);background:rgba(124,92,252,0.1);box-shadow:0 0 0 1px var(--accent)}
+.framework-card:hover{border-color:rgba(124,92,252,0.4)}
+.fw-name{font-family:'Syne',sans-serif;font-weight:700;font-size:13px;color:var(--text)}
+.fw-desc{font-size:11px;color:var(--text-muted)}
+.fw-emoji{font-size:18px;margin-bottom:4px}
+.prompt-output{background:var(--surface3);border:1px solid var(--border);border-radius:12px;padding:16px;font-size:13px;line-height:1.7;color:var(--text-dim);min-height:160px;font-family:'DM Mono','Courier New',monospace;white-space:pre-wrap;word-break:break-word}
+.prompt-placeholder{color:var(--text-muted);font-family:'DM Sans',sans-serif;font-style:italic;font-size:13px}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 20px;border-radius:10px;font-family:'DM Sans',sans-serif;font-weight:500;font-size:13px;cursor:pointer;border:none;transition:all 0.2s;text-decoration:none}
+.btn-primary{background:linear-gradient(135deg,var(--accent),var(--accent2));color:white;box-shadow:0 4px 14px var(--accent-glow)}
+.btn-primary:hover{transform:translateY(-1px);box-shadow:0 6px 20px var(--accent-glow)}
+.btn-ghost{background:var(--surface2);color:var(--text-dim);border:1px solid var(--border)}
+.btn-ghost:hover{color:var(--text);border-color:rgba(255,255,255,0.15)}
+.btn-success{background:linear-gradient(135deg,#16a34a,#22c55e);color:white;box-shadow:0 4px 14px rgba(34,197,94,0.3)}
+.btn-success:hover{transform:translateY(-1px)}
+.btn-row{display:flex;gap:10px;flex-wrap:wrap;margin-top:16px}
+.divider{height:1px;background:var(--border);margin:24px 0}
+.theme-toggle{display:flex;gap:4px;background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:4px;margin-bottom:20px}
+.theme-btn{flex:1;padding:9px;border-radius:8px;font-size:12px;font-weight:600;font-family:'Syne',sans-serif;cursor:pointer;border:none;color:var(--text-muted);background:transparent;transition:all 0.2s;display:flex;align-items:center;justify-content:center;gap:6px}
+.theme-btn.active{background:var(--surface3);color:var(--text);border:1px solid var(--border)}
+/* ── Phone Viewport — no mockup, pure 9:16 chat screen ── */
+.phone-col { display:flex; flex-direction:column; align-items:center; gap:16px; }
+.phone-wrapper { position:relative; width:280px; }
 .phone-frame {
-width: 320px;
-height: 620px;
-border-radius: 44px;
-border: 3px solid rgba(255,255,255,0.12);
-background: #1a1a1a;
-overflow: hidden;
-position: relative;
-box-shadow:
-inset 0 0 0 1px rgba(255,255,255,0.04),
-0 0 0 1px rgba(0,0,0,0.5);
+  width:280px;
+  height:497px; /* 9:16 ratio */
+  border-radius:0;
+  border:none;
+  background:#111b21;
+  overflow:hidden;
+  position:relative;
+  box-shadow:0 8px 40px rgba(0,0,0,0.7);
+}
+#chat-viewport{width:100%;height:100%;display:flex;flex-direction:column;overflow:hidden;position:relative}
+
+/* ═══════════════════════════════════════════════════════
+WHATSAPP DARK MODE — iOS pixel-perfect
+Spec: exact colors, metrics, padding as specified
+═══════════════════════════════════════════════════════ */
+
+/* Font global */
+.theme-wa * {
+font-family: -apple-system, BlinkMacSystemFont, “Helvetica Neue”, Helvetica, Arial, sans-serif;
 }
 
-/* Notch */
-.phone-notch {
-position: absolute;
-top: 0;
-left: 50%;
-transform: translateX(-50%);
-width: 120px;
-height: 30px;
-background: #1a1a1a;
-z-index: 10;
-display: flex;
-align-items: center;
-justify-content: center;
-gap: 8px;
-border-bottom-left-radius: 18px;
-border-bottom-right-radius: 18px;
-}
-.notch-cam {
-width: 10px; height: 10px;
-border-radius: 50%;
-background: #2a2a2a;
-border: 1px solid rgba(255,255,255,0.05);
-}
-.notch-speaker {
-width: 40px; height: 4px;
-background: #2a2a2a;
-border-radius: 2px;
-}
-
-/* Side buttons */
-.phone-btn-right {
-position: absolute;
-right: -5px;
-top: 100px;
-width: 4px;
-height: 50px;
-background: rgba(255,255,255,0.08);
-border-radius: 2px;
-}
-.phone-btn-left1 {
-position: absolute;
-left: -5px;
-top: 90px;
-width: 4px;
-height: 28px;
-background: rgba(255,255,255,0.08);
-border-radius: 2px;
-}
-.phone-btn-left2 {
-position: absolute;
-left: -5px;
-top: 128px;
-width: 4px;
-height: 40px;
-background: rgba(255,255,255,0.08);
-border-radius: 2px;
-}
-.phone-btn-left3 {
-position: absolute;
-left: -5px;
-top: 178px;
-width: 4px;
-height: 40px;
-background: rgba(255,255,255,0.08);
-border-radius: 2px;
-}
-
-/* Chat container inside phone */
-#chat-viewport {
-width: 100%;
-height: 100%;
+/* ── Chat area background — solid clean ── */
+.theme-wa #chat-viewport { background: #0b141a; }
+.theme-wa .chat-messages {
+background: #0b141a;
+padding: 6px 8px;
+flex: 1;
+overflow-y: auto;
 display: flex;
 flex-direction: column;
-overflow: hidden;
-position: relative;
+gap: 2px;
+scrollbar-width: none;
 }
+.theme-wa .chat-messages::-webkit-scrollbar { display: none; }
 
-/* =============================================
-WHATSAPP THEME — pixel-traced from screenshot
-============================================= */
-.theme-wa #chat-viewport {
-background: #0b1014;
-/* Subtle doodle pattern overlay like real WA */
-background-image: url(“data:image/svg+xml,%3Csvg xmlns=‘http://www.w3.org/2000/svg’ width=‘60’ height=‘60’%3E%3Ccircle cx=‘10’ cy=‘10’ r=‘1.5’ fill=‘rgba(255,255,255,0.025)’/%3E%3Ccircle cx=‘40’ cy=‘25’ r=‘1’ fill=‘rgba(255,255,255,0.02)’/%3E%3Ccircle cx=‘20’ cy=‘45’ r=‘1.5’ fill=‘rgba(255,255,255,0.025)’/%3E%3Ccircle cx=‘50’ cy=‘50’ r=‘1’ fill=‘rgba(255,255,255,0.02)’/%3E%3C/svg%3E”);
-}
-
-/* WA Header — dark teal, full width */
+/* ── Header — 60px tall ── */
 .theme-wa .chat-header {
-background: #1f2c34;
-padding: 36px 12px 10px;
-border-bottom: none;
-gap: 8px;
+background: #202c33;
+padding: 0 10px;
+height: 60px;
+min-height: 60px;
+align-items: center;
+gap: 0;
+flex-shrink: 0;
+display: flex;
 }
 
-/* WA back button — pill with count */
-.theme-wa .wa-back {
+/* Back pill — smaller, matches Image 2 */
+.wa-back-pill {
 display: flex;
 align-items: center;
 gap: 2px;
-color: #00a884;
-font-size: 22px;
-font-weight: 300;
+background: rgba(255,255,255,0.1);
+border-radius: 22px;
+padding: 5px 9px 5px 6px;
+margin-right: 8px;
 flex-shrink: 0;
 }
-
-/* WA avatar — circular, smaller */
-.theme-wa .avatar {
-width: 38px;
-height: 38px;
-border-radius: 50%;
+.wa-back-chevron {
+color: #e9edef;
 font-size: 15px;
-font-weight: 700;
+font-weight: 400;
+line-height: 1;
+}
+.wa-back-count {
+color: #e9edef;
+font-size: 12px;
+font-weight: 500;
 }
 
+/* Avatar — 36×36, matches Image 2 proportions */
+.wa-avatar-circle {
+width: 36px;
+height: 36px;
+border-radius: 50%;
+background: #2a6f5a;  /* slightly darker green, closer to real WA */
+display: flex;
+align-items: center;
+justify-content: center;
+flex-shrink: 0;
+margin-right: 9px;
+overflow: hidden;
+}
+.wa-avatar-circle svg { width: 22px; height: 22px; fill: #fff; }
+
+/* Name + status — sized so both lines visible */
+.theme-wa .header-info { flex: 1; min-width: 0; overflow: hidden; }
 .theme-wa .chat-header-name {
 font-size: 15px;
 font-weight: 600;
 color: #e9edef;
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
 line-height: 1.2;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 .theme-wa .chat-header-status {
-font-size: 11.5px;
-color: rgba(233,237,239,0.6);
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
+font-size: 12px;
+color: #8696a0;
+line-height: 1.3;
+white-space: nowrap;
+overflow: hidden;
+text-overflow: ellipsis;
 }
 
-/* WA header icons — video + phone in pill */
-.theme-wa .header-icons {
+/* Right pill — smaller icons, matches Image 2 */
+.wa-right-pill {
 display: flex;
-gap: 4px;
-}
-.theme-wa .wa-icon-pill {
-background: #2a3942;
-border-radius: 20px;
-padding: 6px 14px;
-display: flex;
-gap: 14px;
 align-items: center;
+gap: 12px;
+background: rgba(255,255,255,0.1);
+border-radius: 22px;
+padding: 6px 12px;
+flex-shrink: 0;
 }
-.wa-icon-pill svg { width: 18px; height: 18px; fill: #aebac1; }
+.wa-right-pill svg { width: 17px; height: 17px; fill: #e9edef; }
 
-/* WA sent bubble — dark green, tail bottom-right */
+/* ── Sent bubble — full radius, no tail ── */
+.theme-wa .msg-sent { max-width: 78%; align-self: flex-end; align-items: flex-end; }
 .theme-wa .msg-sent .bubble {
-background: #005c37;
+background: #005c4b;
 color: #e9edef;
-border-radius: 10px 10px 2px 10px;
-padding: 6px 10px 4px;
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
+border-radius: 12px;
+padding: 6px 12px 22px 12px;
 font-size: 14px;
 line-height: 1.45;
 position: relative;
-}
-/* WA sent tail */
-.theme-wa .msg-sent .bubble::after {
-content: ‘’;
-position: absolute;
-bottom: 0;
-right: -7px;
-width: 0;
-height: 0;
-border-style: solid;
-border-width: 0 0 10px 8px;
-border-color: transparent transparent #005c37 transparent;
+min-width: 72px;
+word-break: break-word;
+overflow: visible;
 }
 
-/* WA received bubble — dark slate, tail bottom-left */
+/* ── Received bubble — full radius, no tail ── */
+.theme-wa .msg-recv { max-width: 78%; align-self: flex-start; align-items: flex-start; }
 .theme-wa .msg-recv .bubble {
 background: #1f2c34;
 color: #e9edef;
-border-radius: 10px 10px 10px 2px;
-padding: 6px 10px 4px;
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
+border-radius: 12px;
+padding: 6px 12px 22px 12px;
 font-size: 14px;
 line-height: 1.45;
 position: relative;
-}
-.theme-wa .msg-recv .bubble::after {
-content: ‘’;
-position: absolute;
-bottom: 0;
-left: -7px;
-width: 0;
-height: 0;
-border-style: solid;
-border-width: 0 8px 10px 0;
-border-color: transparent #1f2c34 transparent transparent;
+min-width: 52px;
+word-break: break-word;
+overflow: visible;
 }
 
-/* WA timestamp — inline at bottom right of bubble text */
-.theme-wa .bubble-meta {
+/* ── Meta: time + ticks — bottom-right inside bubble ── */
+.theme-wa .bubble .wa-meta {
+position: absolute;
+bottom: 4px; right: 7px;
 display: flex;
 align-items: center;
-justify-content: flex-end;
 gap: 3px;
-margin-top: 1px;
-margin-bottom: -2px;
+pointer-events: none;
 }
-.theme-wa .time-stamp {
-font-size: 10.5px;
-color: rgba(233,237,239,0.5);
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
-}
-.theme-wa .tick {
+.theme-wa .bubble .wa-time {
 font-size: 11px;
-color: #53bdeb;
-letter-spacing: -1px;
+color: #8696a0;
+white-space: nowrap;
+line-height: 1;
 }
+.wa-ticks { display: flex; align-items: center; line-height: 1; }
+.wa-ticks svg { width: 16px; height: 10px; display: block; }
 
-/* WA sender name — hidden, WA 1-on-1 has no name above bubble */
-.theme-wa .sender-name { display: none; }
+/* ── Gap logic: same sender 2px, new sender 8px ── */
+.theme-wa .msg-row { margin-bottom: 2px; }
+.theme-wa .msg-row.sender-switch { margin-top: 8px; }
 
-/* WA typing indicator */
-.theme-wa .typing-indicator {
-background: #1f2c34;
-border-radius: 10px 10px 10px 2px;
-padding: 10px 14px;
-position: relative;
-}
-.theme-wa .typing-indicator::after {
-content: ‘’;
-position: absolute;
-bottom: 0;
-left: -7px;
-border-style: solid;
-border-width: 0 8px 10px 0;
-border-color: transparent #1f2c34 transparent transparent;
-}
-.theme-wa .dot {
-width: 7px; height: 7px;
-background: rgba(233,237,239,0.4);
-}
-
-/* WA date divider */
+/* ── Date divider — plain bold text, centered ── */
 .theme-wa .date-divider {
-background: #182229;
+background: transparent;
 color: #8696a0;
-border-radius: 8px;
-font-size: 11.5px;
-padding: 4px 12px;
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
+font-size: 12.5px;
+font-weight: 600;
+padding: 10px 0 6px;
+align-self: center;
+margin: 2px 0;
+border-radius: 0;
+box-shadow: none;
 }
 
-/* WA input bar */
-.theme-wa .chat-input-bar {
-background: #0b1014;
-padding: 8px 10px 16px;
-gap: 8px;
+/* ── Typing indicator ── */
+.theme-wa .typing-indicator {
+background: #202c33;
+border-radius: 12px;
+padding: 10px 14px;
+display: flex; align-items: center; gap: 5px;
 }
-.theme-wa .wa-input-plus {
-width: 36px; height: 36px;
-color: #8696a0;
-font-size: 24px;
+.theme-wa .dot { width: 6px; height: 6px; background: #8696a0; }
+
+/* ── Footer — 60px tall, all icons SVG outline, NO green mic bg ── */
+.theme-wa .chat-input-bar {
+background: #202c33;
+padding: 0 15px;
+height: 60px;
+min-height: 60px;
+gap: 10px;
+align-items: center;
+flex-shrink: 0;
+border-top: 1px solid rgba(255,255,255,0.05);
+}
+/* Plus icon — outline SVG, no background */
+.wa-plus {
 display: flex; align-items: center; justify-content: center;
 flex-shrink: 0;
 }
+.wa-plus svg { width: 26px; height: 26px; stroke: #8696a0; fill: none; stroke-width: 1.5; stroke-linecap: round; }
+
+/* Input pill — height 36px, radius 18px */
 .theme-wa .chat-input-pill {
 flex: 1;
-height: 38px;
-border-radius: 24px;
-background: #1f2c34;
-border: none;
-display: flex;
-align-items: center;
-padding: 0 14px;
-gap: 8px;
-font-size: 14px;
-color: #8696a0;
-font-family: -apple-system, ‘Helvetica Neue’, sans-serif;
-}
-.theme-wa .wa-mic {
-width: 40px; height: 40px;
-background: #00a884;
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-flex-shrink: 0;
-color: white;
-font-size: 17px;
-}
-
-/* =============================================
-iMESSAGE THEME — pixel-traced from screenshot
-============================================= */
-.theme-im #chat-viewport { background: #000; }
-
-/* iMessage header — pure black, avatar centered */
-.theme-im .chat-header {
-background: #000;
-flex-direction: column;
-align-items: center;
-padding: 36px 14px 10px;
-gap: 4px;
-border-bottom: none;
-position: relative;
-}
-.theme-im .im-back-btn {
-position: absolute;
-left: 12px;
-top: 36px;
-display: flex;
-align-items: center;
-color: #fff;
-font-size: 22px;
-font-weight: 300;
-gap: 2px;
-}
-.theme-im .im-video-btn {
-position: absolute;
-right: 12px;
-top: 38px;
-width: 34px; height: 34px;
-background: #2c2c2e;
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-color: white;
-font-size: 14px;
-}
-
-/* iMessage big center avatar */
-.theme-im .avatar {
-width: 52px;
-height: 52px;
-border-radius: 50%;
-font-size: 20px;
-font-weight: 700;
-flex-shrink: 0;
-}
-.theme-im .chat-header-name {
-font-size: 15px;
-font-weight: 600;
-color: #fff;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
-display: flex;
-align-items: center;
-gap: 3px;
-}
-.theme-im .chat-header-name::after {
-content: ‘›’;
-color: #8e8e93;
-font-weight: 300;
-font-size: 16px;
-}
-.theme-im .chat-header-status { display: none; }
-.theme-im .header-info { text-align: center; }
-
-/* iMessage sent bubble — blue, teardrop tail bottom-right */
-.theme-im .msg-sent .bubble {
-background: #2196f3;
-color: #fff;
-border-radius: 18px 18px 4px 18px;
-padding: 8px 13px;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
-font-size: 15px;
-line-height: 1.4;
-position: relative;
-}
-/* iMessage sent tail — teardrop style */
-.theme-im .msg-sent .bubble::after {
-content: ‘’;
-position: absolute;
-bottom: 0px;
-right: -6px;
-width: 14px;
-height: 14px;
-background: #2196f3;
-border-radius: 0 0 12px 0;
-clip-path: polygon(0 0, 100% 100%, 0 100%);
-}
-
-/* iMessage received bubble — dark charcoal, tail bottom-left */
-.theme-im .msg-recv .bubble {
-background: #1c1c1e;
-color: #fff;
-border-radius: 18px 18px 18px 4px;
-padding: 8px 13px;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
-font-size: 15px;
-line-height: 1.4;
-position: relative;
-}
-.theme-im .msg-recv .bubble::after {
-content: ‘’;
-position: absolute;
-bottom: 0px;
-left: -6px;
-width: 14px;
-height: 14px;
-background: #1c1c1e;
-border-radius: 0 0 0 12px;
-clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
-
-/* iMessage no bubble-meta row — “Delivered” shown separately */
-.theme-im .bubble-meta { display: none; }
-.theme-im .im-delivered {
-font-size: 11px;
-color: #8e8e93;
-text-align: right;
-padding-right: 4px;
-margin-top: 2px;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
-}
-.theme-im .sender-name { display: none; }
-
-/* iMessage date divider — centered, small gray text */
-.theme-im .date-divider {
-color: #636366;
-background: transparent;
-font-size: 11px;
-padding: 6px 0;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
-font-weight: 400;
-}
-
-/* iMessage typing indicator */
-.theme-im .typing-indicator {
-background: #1c1c1e;
-border-radius: 18px 18px 18px 4px;
-padding: 10px 14px;
-position: relative;
-}
-.theme-im .typing-indicator::after {
-content: ‘’;
-position: absolute;
-bottom: 0px;
-left: -6px;
-width: 14px;
-height: 14px;
-background: #1c1c1e;
-border-radius: 0 0 0 12px;
-clip-path: polygon(100% 0, 100% 100%, 0 100%);
-}
-.theme-im .dot { background: #636366; width: 8px; height: 8px; }
-
-/* iMessage input bar */
-.theme-im .chat-input-bar {
-background: #000;
-padding: 8px 14px 20px;
-gap: 10px;
-border-top: none;
-}
-.theme-im .im-plus-btn {
-width: 32px; height: 32px;
-background: #2c2c2e;
-border-radius: 50%;
-display: flex; align-items: center; justify-content: center;
-color: #fff;
-font-size: 18px;
-font-weight: 300;
-flex-shrink: 0;
-}
-.theme-im .chat-input-pill {
-flex: 1;
 height: 36px;
-border-radius: 20px;
-background: #1c1c1e;
+border-radius: 18px;
+background: #2a3942;
 border: none;
-display: flex;
-align-items: center;
-padding: 0 12px;
-font-size: 14px;
-color: #636366;
-font-family: -apple-system, ‘SF Pro Text’, ‘Helvetica Neue’, sans-serif;
+display: flex; align-items: center;
+padding: 9px 12px;
 gap: 8px;
 }
-
-/* =============================================
-SHARED CHAT LAYOUT
-============================================= */
-/* Chat Header shared base */
-.chat-header {
-display: flex;
-align-items: center;
-gap: 10px;
-z-index: 5;
-flex-shrink: 0;
-}
-
-.avatar {
-border-radius: 50%;
-display: flex;
-align-items: center;
-justify-content: center;
-font-weight: 700;
-color: white;
-flex-shrink: 0;
-}
-.avatar-a { background: linear-gradient(135deg, #6366f1, #8b5cf6); }
-.avatar-b { background: linear-gradient(135deg, #f43f5e, #ec4899); }
-
-.header-info { flex: 1; min-width: 0; }
-
-/* Chat messages area */
-.chat-messages {
+.wa-input-text {
 flex: 1;
-overflow-y: auto;
-padding: 8px 10px;
-display: flex;
-flex-direction: column;
-gap: 3px;
-scrollbar-width: none;
+font-size: 15px;
+color: #8696a0;
 }
-.chat-messages::-webkit-scrollbar { display: none; }
+/* Sticker icon inside pill — outline SVG */
+.wa-sticker-btn { display: flex; align-items: center; flex-shrink: 0; }
+.wa-sticker-btn svg { width: 20px; height: 20px; stroke: #8696a0; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-.msg-row {
-display: flex;
-flex-direction: column;
-max-width: 80%;
-animation: msgIn 0.22s cubic-bezier(0.34, 1.56, 0.64, 1) both;
-}
+/* Camera icon — outside pill, outline SVG */
+.wa-cam-btn { display: flex; align-items: center; flex-shrink: 0; }
+.wa-cam-btn svg { width: 26px; height: 26px; stroke: #8696a0; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-@keyframes msgIn {
-from { opacity: 0; transform: translateY(6px) scale(0.96); }
-to { opacity: 1; transform: translateY(0) scale(1); }
-}
-
-.msg-sent { align-self: flex-end; align-items: flex-end; }
-.msg-recv { align-self: flex-start; align-items: flex-start; }
-
-.bubble {
-word-break: break-word;
-position: relative;
-}
-
-.bubble-meta {
-display: flex;
-align-items: center;
-gap: 3px;
-margin-top: 2px;
-padding: 0 2px;
-}
-.time-stamp { font-size: 10px; }
-.tick { letter-spacing: -1px; }
-.sender-name { display: none; }
-
-/* Typing indicator shared */
-.typing-row {
-align-self: flex-start;
-animation: msgIn 0.22s both;
-}
-.typing-indicator {
-display: flex;
-align-items: center;
-gap: 5px;
-}
-.dot {
-border-radius: 50%;
-animation: dotBounce 1.2s ease-in-out infinite;
-}
-.dot:nth-child(2) { animation-delay: 0.18s; }
-.dot:nth-child(3) { animation-delay: 0.36s; }
-
-@keyframes dotBounce {
-0%, 80%, 100% { transform: scale(0.65); opacity: 0.4; }
-40% { transform: scale(1.1); opacity: 1; }
-}
-
-.date-divider {
-text-align: center;
-margin: 6px 0;
-align-self: center;
-border-radius: 8px;
-padding: 3px 10px;
-font-weight: 500;
-}
-
-/* Chat input bar shared */
-.chat-input-bar {
-display: flex;
-align-items: center;
+/* Mic icon — NO background circle, just outline SVG */
+.wa-mic-btn {
+display: flex; align-items: center; justify-content: center;
 flex-shrink: 0;
+background: transparent;
+border-radius: 0;
+width: auto; height: auto;
 }
-.chat-input-pill {
-display: flex;
-align-items: center;
-}
-.input-icon { opacity: 0.6; }
+.wa-mic-btn svg { width: 26px; height: 26px; stroke: #8696a0; fill: none; stroke-width: 1.5; stroke-linecap: round; stroke-linejoin: round; }
 
-/* CONTROLS BELOW PHONE */
-.phone-controls {
-width: 100%;
-display: flex;
-flex-direction: column;
-gap: 12px;
-}
+.theme-wa .bubble-meta { display: none !important; }
+.theme-wa .sender-name { display: none; }
 
-/* PROGRESS */
-.progress-container {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 14px 16px;
-}
+/* ═══════════════════════════════════════════════
+iMESSAGE DARK THEME — pixel-traced from ref
+═══════════════════════════════════════════════ */
+.theme-im #chat-viewport { background:#000; }
+.theme-im .chat-header { background:rgba(28,28,30,0.95); flex-direction:column; align-items:center; padding:10px 14px 8px; gap:2px; border-bottom:none; position:relative; flex-shrink:0; min-height:82px; }
+.theme-im .im-back-area { position:absolute; left:10px; top:50%; transform:translateY(-50%); display:flex; align-items:center; gap:2px; color:#007aff; font-family:-apple-system,sans-serif; font-weight:400; }
+.theme-im .im-back-chevron { font-size:22px; font-weight:300; line-height:1; color:#007aff; }
+.theme-im .im-back-count { font-size:16px; font-weight:400; color:#007aff; }
+.theme-im .im-video-area { position:absolute; right:14px; top:50%; transform:translateY(-50%); color:#007aff; font-size:14px; }
+.theme-im .avatar { width:44px!important; height:44px!important; font-size:18px!important; flex-shrink:0; }
+.theme-im .header-info { text-align:center; }
+.theme-im .chat-header-name { font-size:13px; font-weight:500; color:#fff; font-family:-apple-system,sans-serif; display:flex; align-items:center; gap:3px; justify-content:center; }
+.theme-im .im-chevron { color:#007aff; font-size:14px; font-weight:400; }
+.theme-im .chat-header-status { display:none; }
+.theme-im .chat-messages { background:#000; padding:8px 8px; }
+/* iMessage SENT — blue, full pill, NO tail */
+.theme-im .msg-sent { max-width:75%; align-self:flex-end; align-items:flex-end; }
+.theme-im .msg-sent .bubble { background:#0b84fe; color:#fff; border-radius:20px; padding:9px 14px; font-family:-apple-system,sans-serif; font-size:15px; line-height:1.4; position:relative; word-break:break-word; }
+/* iMessage RECEIVED — dark gray, full pill, NO tail */
+.theme-im .msg-recv { max-width:75%; align-self:flex-start; align-items:flex-start; }
+.theme-im .msg-recv .bubble { background:#26252a; color:#fff; border-radius:20px; padding:9px 14px; font-family:-apple-system,sans-serif; font-size:15px; line-height:1.4; position:relative; word-break:break-word; }
+.theme-im .bubble-meta { display:none!important; }
+.theme-im .im-delivered { font-size:11px; color:#636366; text-align:right; padding-right:4px; margin-top:3px; font-family:-apple-system,sans-serif; }
+.theme-im .sender-name { display:none; }
+.theme-im .msg-row { margin-bottom:2px; }
+.theme-im .date-divider { color:#636366; background:transparent; font-size:11px; padding:8px 0; font-family:-apple-system,sans-serif; align-self:center; margin:4px 0; }
+/* Typing indicator — full pill, NO tail */
+.theme-im .typing-indicator { background:#26252a; border-radius:20px; padding:10px 14px; display:flex; align-items:center; gap:5px; }
+.theme-im .dot { background:#8e8e93; width:7px; height:7px; }
+.theme-im .chat-input-bar { background:#1c1c1e; padding:8px 10px 16px; gap:8px; align-items:center; border-top:1px solid rgba(255,255,255,0.08); flex-shrink:0; }
+.theme-im .im-plus-circle { width:32px; height:32px; background:#3a3a3c; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:20px; color:#fff; font-weight:300; flex-shrink:0; }
+.theme-im .im-app-btn { width:32px; height:32px; background:#3a3a3c; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:15px; color:#fff; flex-shrink:0; }
+.theme-im .chat-input-pill { flex:1; height:34px; border-radius:18px; background:#2c2c2e; border:1px solid #3a3a3c; display:flex; align-items:center; padding:0 12px; font-size:14px; color:#636366; font-family:-apple-system,sans-serif; }
+.theme-im .im-voice-btn { width:32px; height:32px; background:#3a3a3c; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:14px; color:#fff; flex-shrink:0; }
 
-.progress-label {
-display: flex;
-justify-content: space-between;
-font-size: 12px;
-color: var(–text-muted);
-margin-bottom: 8px;
-}
+/* ── Shared base ── */
+.chat-header { display:flex; align-items:center; z-index:5; }
+.avatar { border-radius:50%; display:flex; align-items:center; justify-content:center; font-weight:700; color:white; flex-shrink:0; }
+.avatar-a { background:linear-gradient(135deg,#6366f1,#8b5cf6); }
+.avatar-b { background:linear-gradient(135deg,#f43f5e,#ec4899); }
+.header-info { flex:1; min-width:0; }
+.chat-messages { flex:1; overflow-y:auto; display:flex; flex-direction:column; gap:2px; scrollbar-width:none; }
+.chat-messages::-webkit-scrollbar { display:none; }
+.msg-row { display:flex; flex-direction:column; animation:msgIn 0.22s cubic-bezier(0.34,1.56,0.64,1) both; }
+@keyframes msgIn { from{opacity:0;transform:translateY(6px) scale(0.96)} to{opacity:1;transform:translateY(0) scale(1)} }
+.msg-sent { align-self:flex-end; align-items:flex-end; }
+.msg-recv { align-self:flex-start; align-items:flex-start; }
+.bubble { word-break:break-word; position:relative; }
+.typing-row { align-self:flex-start; animation:msgIn 0.22s both; }
+.dot { border-radius:50%; animation:dotBounce 1.2s ease-in-out infinite; }
+.dot:nth-child(2){animation-delay:0.18s} .dot:nth-child(3){animation-delay:0.36s}
+@keyframes dotBounce { 0%,80%,100%{transform:scale(0.65);opacity:0.4} 40%{transform:scale(1.1);opacity:1} }
+.date-divider { text-align:center; font-weight:500; }
+.chat-input-bar { display:flex; align-items:center; }
 
-.progress-bar {
-height: 4px;
-background: var(–surface3);
-border-radius: 2px;
-overflow: hidden;
-}
-
-.progress-fill {
-height: 100%;
-background: linear-gradient(90deg, var(–accent), var(–accent2));
-border-radius: 2px;
-transition: width 0.3s;
-width: 0%;
-}
-
-/* STATUS BADGE */
-.status-badge {
-display: inline-flex;
-align-items: center;
-gap: 6px;
-padding: 6px 12px;
-border-radius: 20px;
-font-size: 12px;
-font-weight: 500;
-border: 1px solid;
-}
-
-.status-idle { background: rgba(107,107,128,0.1); border-color: rgba(107,107,128,0.2); color: var(–text-muted); }
-.status-playing { background: rgba(124,92,252,0.1); border-color: rgba(124,92,252,0.3); color: var(–accent2); }
-.status-recording { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.3); color: #f87171; }
-.status-done { background: rgba(34,197,94,0.1); border-color: rgba(34,197,94,0.3); color: var(–success); }
-
-.pulse {
-width: 8px; height: 8px;
-border-radius: 50%;
-background: currentColor;
-animation: pulse 1.2s ease-in-out infinite;
-}
-@keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
-
-/* PARSER PREVIEW */
-.parsed-preview {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 12px;
-padding: 14px;
-max-height: 150px;
-overflow-y: auto;
-font-size: 12px;
-line-height: 1.6;
-}
-
-.parsed-msg {
-display: flex;
+/* ── Progress + Status ── */
+.progress-container{background:var(–surface2);border:1px solid var(–border);border-radius:12px;padding:14px 16px}
+.progress-label{display:flex;justify-content:space-between;font-size:12px;color:var(–text-muted);margin-bottom:8px}
+.progress-bar{height:4px;background:var(–surface3);border-radius:2px;overflow:hidden}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(–accent),var(–accent2));border-radius:2px;transition:width 0.3s;width:0%}
+.status-badge{display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border-radius:20px;font-size:12px;font-weight:500;border:1px solid}
+.status-idle{background:rgba(107,107,128,0.1);border-color:rgba(107,107,128,0.2);color:var(–text-muted)}
+.status-playing{background:rgba(124,92,252,0.1);border-color:rgba(124,92,252,0.3);color:var(–accent2)}
+.status-recording{background:rgba(239,68,68,0.1);border-color:rgba(239,68,68,0.3);color:#f87171}
+.status-done{background:rgba(34,197,94,0.1);border-color:rgba(34,197,94,0.3);color:var(–success)}
+.pulse{width:8px;height:8px;border-radius:50%;background:currentColor;animation:pulse 1.2s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.3}}
+.section-label{font-family:‘Syne’,sans-serif;font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:2px;color:var(–text-muted);margin-bottom:12px;display:flex;align-items:center;gap:8px}
+.section-label::after{content:’’;flex:1;height:1px;background:var(–border)}
+.speed-row{display:flex;gap:8px;margin-bottom:16px}
+.speed-btn{flex:1;padding:8px;background:var(–surface2);border:1px solid var(–border);border-radius:8px;font-size:12px;font-weight:600;font-family:‘Syne’,sans-serif;color:var(–text-muted);cursor:pointer;text-align:center;transition:all 0.2s}
+.speed-btn.active{background:rgba(124,92,252,0.15);border-color:var(–accent);color:var(–accent2)}
+.export-card{background:var(–surface2);border:1px solid var(–border);border-radius:14px;padding:16px 14px;display:flex;flex-direction:column;align-items:center;text-align:center;transition:border-color 0.2s}
+.export-card:hover{border-color:rgba(124,92,252,0.3)}
+.export-icon{font-size:26px;margin-bottom:6px}
+.export-label{font-family:‘Syne’,sans-serif;font-weight:700;font-size:14px;color:var(–text);margin-bottom:4px}
+.export-desc{font-size:11px;color:var(–text-muted);line-height:1.5}
+.parsed-preview{background:var(–surface2);border:1px solid var(–border);border-radius:12px;padding:14px;max-height:150px;overflow-y:auto;font-size:12px;line-height:1.6}
+.parsed-msg{display:flex;gap:8px;margin-bottom:4px;align-items:flex-start}
+.parsed-name{font-weight:600;min-width:70px;font-family:‘Syne’,sans-serif;font-size:11px}
+.parsed-name.a{color:#818cf8}
+.parsed-name.b{color:#f472b6}
+.parsed-text{color:var(–text-dim)}
+.info-box{background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.2);border-radius:10px;padding:12px 14px;font-size:12px;color:var(–text-dim);line-height:1.7;margin-bottom:16px}
+.info-box strong{color:var(–accent2)}
+.copy-feedback{display:none;font-size:12px;color:var(–success);margin-left:8px}
+#record-canvas{display:none}
+.toast{position:fixed;bottom:30px;left:50%;transform:translateX(-50%) translateY(20px);background:var(–surface2);border:1px solid var(–border);border-radius:12px;padding:12px 20px;font-size:13px;color:var(–text);opacity:0;transition:all 0.3s;z-index:100;white-space:nowrap;pointer-events:none;box-shadow:0 8px 30px rgba(0,0,0,0.4)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+/* ── Phase 1 new components ── */
+.category-grid {
+display: grid;
+grid-template-columns: 1fr 1fr;
 gap: 8px;
 margin-bottom: 4px;
-align-items: flex-start;
 }
-
-.parsed-name {
-font-weight: 600;
-min-width: 70px;
-font-family: ‘Syne’, sans-serif;
-font-size: 11px;
-}
-
-.parsed-name.a { color: #818cf8; }
-.parsed-name.b { color: #f472b6; }
-.parsed-text { color: var(–text-dim); }
-
-/* COPY FEEDBACK */
-.copy-feedback {
-display: none;
-font-size: 12px;
-color: var(–success);
-margin-left: 8px;
-}
-
-/* CANVAS (hidden, used for recording) */
-#record-canvas { display: none; }
-
-/* TOAST */
-.toast {
-position: fixed;
-bottom: 30px;
-left: 50%;
-transform: translateX(-50%) translateY(20px);
+.cat-card {
 background: var(–surface2);
-border: 1px solid var(–border);
+border: 1.5px solid var(–border);
 border-radius: 12px;
-padding: 12px 20px;
-font-size: 13px;
-color: var(–text);
-opacity: 0;
-transition: all 0.3s;
-z-index: 100;
-white-space: nowrap;
-pointer-events: none;
-box-shadow: 0 8px 30px rgba(0,0,0,0.4);
-}
-.toast.show {
-opacity: 1;
-transform: translateX(-50%) translateY(0);
-}
-
-/* EXPORT CARDS */
-.export-card {
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 14px;
-padding: 16px 14px;
+padding: 12px;
+cursor: pointer;
+transition: all 0.18s;
 display: flex;
 flex-direction: column;
-align-items: center;
-text-align: center;
-transition: border-color 0.2s;
+gap: 3px;
+user-select: none;
 }
-.export-card:hover { border-color: rgba(124,92,252,0.3); }
-.export-icon { font-size: 26px; margin-bottom: 6px; }
-.export-label {
-font-family: ‘Syne’, sans-serif;
-font-weight: 700;
-font-size: 14px;
-color: var(–text);
+.cat-card:hover { border-color: rgba(124,92,252,0.4); background: rgba(124,92,252,0.05); }
+.cat-card.selected { border-color: var(–accent); background: rgba(124,92,252,0.12); box-shadow: 0 0 0 1px var(–accent); }
+.cat-emoji { font-size: 20px; margin-bottom: 2px; }
+.cat-name { font-family: ‘Syne’,sans-serif; font-weight: 700; font-size: 12px; color: var(–text); }
+.cat-desc { font-size: 10.5px; color: var(–text-muted); line-height: 1.4; }
+
+/* Tone grid */
+.tone-grid {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 6px;
 margin-bottom: 4px;
 }
-.export-desc {
-font-size: 11px;
-color: var(–text-muted);
-line-height: 1.5;
-}
-.export-btn { padding: 9px 12px !important; font-size: 12px !important; }
-
-/* SCROLLBAR */
-::-webkit-scrollbar { width: 4px; }
-::-webkit-scrollbar-track { background: transparent; }
-::-webkit-scrollbar-thumb { background: var(–border); border-radius: 2px; }
-
-/* Step indicator */
-.step-indicator {
-display: flex;
-gap: 6px;
-align-items: center;
-margin-bottom: 20px;
-}
-.step-dot {
-width: 8px; height: 8px;
-border-radius: 50%;
-background: var(–border);
-}
-.step-dot.done { background: var(–accent); }
-.step-line {
-flex: 1; height: 1px;
-background: var(–border);
-}
-
-/* Info box */
-.info-box {
-background: rgba(124,92,252,0.07);
-border: 1px solid rgba(124,92,252,0.2);
+.tone-chip {
+background: var(–surface2);
+border: 1.5px solid var(–border);
 border-radius: 10px;
-padding: 12px 14px;
-font-size: 12px;
-color: var(–text-dim);
-line-height: 1.7;
-margin-bottom: 16px;
-}
-.info-box strong { color: var(–accent2); }
-
-/* Section label */
-.section-label {
-font-family: ‘Syne’, sans-serif;
-font-weight: 700;
-font-size: 11px;
-text-transform: uppercase;
-letter-spacing: 2px;
-color: var(–text-muted);
-margin-bottom: 12px;
-display: flex;
-align-items: center;
-gap: 8px;
-}
-.section-label::after {
-content: ‘’;
-flex: 1;
-height: 1px;
-background: var(–border);
-}
-
-/* Speed control */
-.speed-row {
-display: flex;
-gap: 8px;
-margin-bottom: 16px;
-}
-.speed-btn {
-flex: 1;
-padding: 8px;
-background: var(–surface2);
-border: 1px solid var(–border);
-border-radius: 8px;
-font-size: 12px;
-font-weight: 600;
-font-family: ‘Syne’, sans-serif;
-color: var(–text-muted);
+padding: 8px 6px;
 cursor: pointer;
 text-align: center;
-transition: all 0.2s;
+transition: all 0.18s;
+user-select: none;
 }
-.speed-btn.active {
-background: rgba(124,92,252,0.15);
-border-color: var(–accent);
+.tone-chip:hover { border-color: rgba(124,92,252,0.4); }
+.tone-chip.selected { border-color: var(–accent); background: rgba(124,92,252,0.12); box-shadow: 0 0 0 1px var(–accent); }
+.tone-chip-icon { font-size: 16px; display: block; margin-bottom: 3px; }
+.tone-chip-name { font-size: 10px; font-weight: 600; font-family: ‘Syne’,sans-serif; color: var(–text); display: block; }
+.tone-chip-desc { font-size: 9.5px; color: var(–text-muted); display: block; margin-top: 2px; line-height: 1.3; }
+
+/* Audience grid */
+.audience-grid {
+display: flex;
+gap: 6px;
+flex-wrap: wrap;
+}
+.aud-chip {
+background: var(–surface2);
+border: 1.5px solid var(–border);
+border-radius: 20px;
+padding: 6px 14px;
+cursor: pointer;
+font-size: 12px;
+font-weight: 500;
+color: var(–text-dim);
+transition: all 0.18s;
+user-select: none;
+white-space: nowrap;
+}
+.aud-chip:hover { border-color: rgba(124,92,252,0.4); color: var(–text); }
+.aud-chip.selected { border-color: var(–accent); background: rgba(124,92,252,0.12); color: var(–accent2); box-shadow: 0 0 0 1px var(–accent); }
+
+/* Length toggle */
+.length-toggle {
+display: grid;
+grid-template-columns: 1fr 1fr 1fr;
+gap: 6px;
+}
+.length-btn {
+background: var(–surface2);
+border: 1.5px solid var(–border);
+border-radius: 10px;
+padding: 10px 8px;
+cursor: pointer;
+display: flex;
+flex-direction: column;
+align-items: center;
+gap: 2px;
+transition: all 0.18s;
+user-select: none;
+}
+.length-btn:hover { border-color: rgba(124,92,252,0.4); }
+.length-btn.active { border-color: var(–accent); background: rgba(124,92,252,0.12); box-shadow: 0 0 0 1px var(–accent); }
+.len-icon { font-size: 18px; }
+.len-label { font-family: ‘Syne’,sans-serif; font-weight: 700; font-size: 12px; color: var(–text); }
+.len-desc { font-size: 9.5px; color: var(–text-muted); text-align: center; line-height: 1.3; }
+
+/* Brief summary chips */
+.brief-chip {
+background: rgba(124,92,252,0.12);
+border: 1px solid rgba(124,92,252,0.3);
+border-radius: 20px;
+padding: 3px 10px;
+font-size: 11px;
 color: var(–accent2);
+font-weight: 500;
 }
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(–border);border-radius:2px}
+
+/* ── Profile picture upload ── */
+.pp-upload-label {
+display:flex; align-items:center; gap:10px;
+cursor:pointer; padding:10px 12px;
+background:var(–surface2); border:1.5px dashed var(–border);
+border-radius:10px; transition:border-color 0.2s; width:100%;
+}
+.pp-upload-label:hover { border-color:var(–accent); }
+.pp-preview {
+width:40px; height:40px; border-radius:50%;
+background:#2a6f5a; display:flex; align-items:center;
+justify-content:center; overflow:hidden; flex-shrink:0;
+}
+.pp-preview img { width:100%; height:100%; object-fit:cover; border-radius:50%; }
+.pp-preview-svg { width:22px; height:22px; fill:#fff; }
+.pp-upload-text { font-size:12px; color:var(–text-dim); line-height:1.5; }
+.pp-upload-text strong { color:var(–text); font-size:12px; display:block; margin-bottom:1px; }
+#pp-file-input { display:none; }
 </style>
 
 </head>
 <body>
-
-<canvas id="record-canvas" width="390" height="755"></canvas>
-
+<canvas id="record-canvas" width="1170" height="2280" style="display:none"></canvas>
 <div class="toast" id="toast"></div>
-
 <div class="app-wrapper">
+
   <header>
     <div class="logo">
       <div class="logo-icon">🎬</div>
@@ -1342,345 +551,378 @@ color: var(–accent2);
         <div class="logo-sub">Fake Chat Video Generator</div>
       </div>
     </div>
-    <div class="header-badge">
-      <span>●</span> 100% Free · No APIs · Browser-only
-    </div>
+    <div class="header-badge"><span>●</span> 100% Free · No APIs · Browser-only</div>
   </header>
 
-  <!-- Phase Tabs -->
-
   <div class="phase-tabs">
-    <button class="phase-tab active" onclick="switchPhase(1)">
-      <span class="phase-number">1</span>
-      Prompt Builder
-    </button>
-    <button class="phase-tab" onclick="switchPhase(2)">
-      <span class="phase-number">2</span>
-      Video Renderer
-    </button>
+    <button class="phase-tab active" onclick="switchPhase(1)"><span class="phase-number">1</span> Prompt Builder</button>
+    <button class="phase-tab" onclick="switchPhase(2)"><span class="phase-number">2</span> Video Renderer</button>
   </div>
 
-  <!-- ==================== PHASE 1 ==================== -->
+  <!-- PHASE 1 -->
 
   <div class="phase-panel active" id="phase1">
     <div class="two-col">
-      <!-- Left: Builder -->
-      <div>
-        <div class="card" style="margin-bottom:20px">
-          <div class="card-title">🎯 Script Topic</div>
-          <div class="card-desc">What's the drama about? Be specific — the more detail, the better the AI script.</div>
 
 ```
+  <!-- LEFT COLUMN -->
+  <div>
+
+    <!-- STEP 1: Basic Info -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">✍️ Script Brief</div>
+      <div class="card-desc">Isi brief ini sedetail mungkin — semakin spesifik, semakin viral scriptnya.</div>
+
       <div class="form-group">
-        <label>Chat Topic / Scenario</label>
-        <input type="text" id="topic-input" placeholder="e.g. teman pura-pura lupa punya utang 500k" />
+        <label>Topik / Skenario</label>
+        <input type="text" id="topic-input" placeholder="e.g. teman pura-pura lupa punya utang 500k"/>
       </div>
 
       <div class="form-group">
-        <label>Character A (Sender)</label>
-        <input type="text" id="name-a" placeholder="e.g. Rania" />
+        <label>Deskripsi Tambahan <span style="color:var(--text-muted);font-weight:400;text-transform:none;letter-spacing:0">(opsional tapi sangat disarankan)</span></label>
+        <textarea id="topic-desc" rows="3" placeholder="Ceritakan konteks lebih dalam. Misal: Si A dan B sudah berteman 5 tahun. B selalu minta tolong tapi tidak pernah balas budi. Kali ini A akhirnya meledak..."></textarea>
       </div>
 
-      <div class="form-group">
-        <label>Character B (Receiver)</label>
-        <input type="text" id="name-b" placeholder="e.g. Dito" />
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div class="form-group" style="margin-bottom:0">
+          <label>Karakter A</label>
+          <input type="text" id="name-a" placeholder="e.g. Rania"/>
+        </div>
+        <div class="form-group" style="margin-bottom:0">
+          <label>Karakter B</label>
+          <input type="text" id="name-b" placeholder="e.g. Dito"/>
+        </div>
+      </div>
+    </div>
+
+    <!-- STEP 2: Category -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">🎭 Kategori Drama</div>
+      <div class="card-desc">Pilih satu tema. Setiap kategori punya hook psychology yang berbeda untuk TikTok.</div>
+      <div class="category-grid" id="category-grid">
+        <!-- rendered by JS -->
+      </div>
+    </div>
+
+    <!-- STEP 3: Tone + Audience + Length -->
+    <div class="card" style="margin-bottom:20px">
+      <div class="card-title">🎯 Targeting & Tone</div>
+      <div class="card-desc">Kombinasi ini menentukan gaya bahasa dan emosi yang dipicu di penonton TikTok.</div>
+
+      <!-- Tone -->
+      <div class="section-label">Tone</div>
+      <div class="tone-grid" id="tone-grid">
+        <!-- rendered by JS -->
       </div>
 
-      <div class="form-group">
-        <label>Chat App Style</label>
-        <select id="app-style">
-          <option value="WhatsApp">WhatsApp</option>
-          <option value="iMessage">iMessage</option>
-          <option value="Instagram DM">Instagram DM</option>
-          <option value="Telegram">Telegram</option>
+      <!-- Audience -->
+      <div class="section-label" style="margin-top:16px">Target Audience</div>
+      <div class="audience-grid" id="audience-grid">
+        <!-- rendered by JS -->
+      </div>
+
+      <!-- Chat Length -->
+      <div class="section-label" style="margin-top:16px">Panjang Chat</div>
+      <div class="length-toggle">
+        <button class="length-btn active" data-length="short" onclick="setLength('short',this)">
+          <span class="len-icon">⚡</span>
+          <span class="len-label">Short</span>
+          <span class="len-desc">8–12 pesan · 30 detik</span>
+        </button>
+        <button class="length-btn" data-length="medium" onclick="setLength('medium',this)">
+          <span class="len-icon">🎯</span>
+          <span class="len-label">Medium</span>
+          <span class="len-desc">13–18 pesan · 60 detik</span>
+        </button>
+        <button class="length-btn" data-length="long" onclick="setLength('long',this)">
+          <span class="len-icon">🎬</span>
+          <span class="len-label">Long</span>
+          <span class="len-desc">19–25 pesan · 90 detik</span>
+        </button>
+      </div>
+
+      <!-- Language -->
+      <div class="section-label" style="margin-top:16px">Bahasa</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px">
+        <select id="script-lang" style="margin:0">
+          <option value="Indonesian (casual, bahasa gaul)">🇮🇩 Bahasa Gaul</option>
+          <option value="English (Gen-Z casual slang)">🇺🇸 English Gen-Z</option>
+          <option value="Mixed Bahasa-English code-switching">🔀 Bahasa + English</option>
+          <option value="Malay casual">🇲🇾 Malay Casual</option>
         </select>
-      </div>
-
-      <div class="form-group">
-        <label>Script Language</label>
-        <select id="script-lang">
-          <option value="Indonesian (casual, gaul slang)">Indonesian (Bahasa gaul)</option>
-          <option value="English (Gen-Z casual)">English (Gen-Z)</option>
-          <option value="Mixed Bahasa-English (code-switching)">Bahasa-English (code-switch)</option>
-          <option value="Malay (casual)">Malay (casual)</option>
+        <select id="app-style" style="margin:0">
+          <option>WhatsApp</option>
+          <option>iMessage</option>
+          <option>Instagram DM</option>
+          <option>Telegram</option>
         </select>
       </div>
     </div>
 
+    <!-- STEP 4: Virality Framework -->
     <div class="card">
       <div class="card-title">⚡ Virality Framework</div>
-      <div class="card-desc">Choose the narrative structure. This controls how the story is designed to hook viewers.</div>
-
+      <div class="card-desc">Struktur narasi yang menentukan bagaimana penonton terhook dan terus nonton sampai habis.</div>
       <div class="framework-grid">
-        <label class="framework-option">
-          <input type="radio" name="framework" value="gossip" checked>
+        <label class="framework-option"><input type="radio" name="framework" value="gossip" checked>
           <div class="framework-card">
             <div class="fw-emoji">🔥</div>
             <div class="fw-name">The Gossip Bait</div>
-            <div class="fw-desc">Starts mid-conflict. No context. Instantly confused → curious → must watch.</div>
+            <div class="fw-desc">Mulai di tengah konflik — tanpa konteks. Penonton langsung bingung → penasaran → harus nonton sampai habis. Hook terkuat untuk 3 detik pertama.</div>
           </div>
         </label>
-        <label class="framework-option">
-          <input type="radio" name="framework" value="cliffhanger">
+        <label class="framework-option"><input type="radio" name="framework" value="cliffhanger">
           <div class="framework-card">
             <div class="fw-emoji">🎣</div>
             <div class="fw-name">The Cliffhanger</div>
-            <div class="fw-desc">Deliberate delays. Typing indicators that never arrive. Suspense builds to explosion.</div>
+            <div class="fw-desc">Delay yang disengaja. Typing indicator lama, jawaban singkat, suspensi yang naik perlahan. Cocok untuk retention rate tinggi — penonton takut skip.</div>
           </div>
         </label>
-        <label class="framework-option">
-          <input type="radio" name="framework" value="plottwist">
+        <label class="framework-option"><input type="radio" name="framework" value="plottwist">
           <div class="framework-card">
             <div class="fw-emoji">💥</div>
             <div class="fw-name">The Plot Twist Drop</div>
-            <div class="fw-desc">Normal innocent setup → one final message completely flips the story. Comment magnet.</div>
+            <div class="fw-desc">Setup normal dan innocent → satu pesan terakhir membalik segalanya. Mesin komentar terkuat: penonton scroll balik, tag teman, dan share.</div>
+          </div>
+        </label>
+        <label class="framework-option"><input type="radio" name="framework" value="slowburn">
+          <div class="framework-card">
+            <div class="fw-emoji">🕯️</div>
+            <div class="fw-name">The Slow Burn</div>
+            <div class="fw-desc">Emosi dibangun perlahan dari calm → tension → ledakan. Paling efektif untuk konten relationship dan family drama yang memancing empati dalam.</div>
           </div>
         </label>
       </div>
     </div>
+
   </div>
 
-  <!-- Right: Output -->
+  <!-- RIGHT COLUMN: Generated Prompt -->
   <div>
-    <div class="card" style="margin-bottom:20px">
-      <div class="card-title">🤖 Generated Master Prompt</div>
-      <div class="card-desc">This prompt is engineered to extract a perfectly formatted, high-drama chat script from ChatGPT or Gemini.</div>
+    <div class="card" style="margin-bottom:20px;position:sticky;top:20px">
+      <div class="card-title">🤖 Master Prompt</div>
+      <div class="card-desc">Dioptimasi oleh TikTok Content Strategist + Behavioral Copywriter AI. Paste ke ChatGPT atau Gemini.</div>
+
+      <!-- Brief summary chips -->
+      <div id="brief-summary" style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:14px;min-height:28px"></div>
 
       <div class="prompt-output" id="prompt-output">
-        <span class="prompt-placeholder">↑ Fill in the fields and click "Generate Prompt" to see your Master Prompt here.</span>
+        <span class="prompt-placeholder">↑ Isi brief di kiri lalu klik "Generate Prompt".</span>
       </div>
-
       <div class="btn-row">
-        <button class="btn btn-primary" onclick="generatePrompt()">
-          ✦ Generate Prompt
-        </button>
-        <button class="btn btn-ghost" onclick="copyPrompt()" id="copy-btn">
-          📋 Copy Prompt
-        </button>
+        <button class="btn btn-primary" onclick="generatePrompt()">✦ Generate Prompt</button>
+        <button class="btn btn-ghost" onclick="copyPrompt()">📋 Copy</button>
         <span class="copy-feedback" id="copy-feedback">✓ Copied!</span>
       </div>
     </div>
 
     <div class="card">
-      <div class="card-title">📋 How to use this</div>
+      <div class="card-title">📋 Cara Pakai</div>
       <div class="card-desc" style="margin-bottom:0">
         <div style="display:flex;flex-direction:column;gap:10px">
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span>
-            <span>Generate the Master Prompt above and copy it.</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span>
-            <span>Paste into <strong>ChatGPT</strong> or <strong>Gemini</strong> and run it. Copy the output script.</span>
-          </div>
-          <div style="display:flex;gap:10px;align-items:flex-start">
-            <span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span>
-            <span>Switch to <strong>Phase 2</strong>, paste the script, and render your video!</span>
-          </div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">1</span><span>Isi semua brief di kiri → Generate Prompt → Copy.</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">2</span><span>Paste ke <strong>ChatGPT</strong> atau <strong>Gemini</strong>. Copy hasil scriptnya.</span></div>
+          <div style="display:flex;gap:10px;align-items:flex-start"><span style="background:var(--accent);color:white;width:22px;height:22px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;flex-shrink:0">3</span><span>Pindah ke <strong>Phase 2</strong>, paste script, render video!</span></div>
         </div>
       </div>
     </div>
   </div>
 </div>
-
 <div style="text-align:center;margin-top:30px">
-  <button class="btn btn-primary" onclick="switchPhase(2)" style="padding:14px 32px;font-size:14px">
-    Go to Phase 2: Video Renderer →
-  </button>
+  <button class="btn btn-primary" onclick="switchPhase(2)" style="padding:14px 32px;font-size:14px">Lanjut ke Phase 2: Video Renderer →</button>
 </div>
 ```
 
   </div>
 
-  <!-- ==================== PHASE 2 ==================== -->
+  <!-- PHASE 2 -->
 
   <div class="phase-panel" id="phase2">
     <div class="phase2-split">
-      <!-- Left: Scrollable config column -->
       <div class="phase2-left">
         <div class="card" style="margin-bottom:20px">
           <div class="card-title">📜 Chat Script Input</div>
-          <div class="card-desc">Paste the raw script from ChatGPT/Gemini. Format: <code style="background:var(--surface3);padding:2px 6px;border-radius:4px;font-size:11px">Name: message text</code> per line.</div>
+          <div class="card-desc">Paste the raw script. Format: <code style="background:var(--surface3);padding:2px 6px;border-radius:4px;font-size:11px">Name: message text</code> per line.</div>
+          <div class="info-box"><strong>Smart Parser:</strong> Detects speaker names automatically. Colons inside messages are safe.</div>
+          <textarea id="script-input" rows="10" placeholder="Rania: hei, kamu belum balikin uang 500k&#10;Dito: hah? kapan aku pinjem?&#10;..." style="font-family:'DM Mono','Courier New',monospace;font-size:12px;line-height:1.7;pointer-events:auto;position:relative;z-index:10"></textarea>
+          <div class="btn-row">
+            <button class="btn btn-ghost" onclick="parseAndPreview()" style="font-size:12px">🔍 Parse & Preview</button>
+            <button class="btn btn-ghost" onclick="loadDemo()" style="font-size:12px">✨ Load Demo</button>
+          </div>
+          <div id="parse-preview" style="margin-top:14px;display:none">
+            <div class="section-label">Parsed Messages</div>
+            <div class="parsed-preview" id="parsed-list"></div>
+          </div>
+        </div>
 
 ```
-      <div class="info-box">
-        <strong>Smart Parser:</strong> The engine detects speaker names automatically in the first pass. Colons inside messages are safe (e.g. "Rania: tunggu, jam 3: oke kan?" — "jam 3: oke kan" is captured correctly).
-      </div>
-
-      <textarea id="script-input" rows="10" placeholder="Rania: hei, kamu belum balikin uang 500k yang kamu pinjem bulan lalu&#10;Dito: hah? kapan aku pinjem?&#10;Rania: seriously? kamu udah lupa?&#10;Dito: aku ga inget sama sekali loh&#10;..." style="font-family:'DM Mono','Courier New',monospace;font-size:12px;line-height:1.7;-webkit-user-select:text;user-select:text;pointer-events:auto;position:relative;z-index:5"></textarea>
-
-      <div class="btn-row">
-        <button class="btn btn-ghost" onclick="parseAndPreview()" style="font-size:12px">
-          🔍 Parse & Preview
-        </button>
-        <button class="btn btn-ghost" onclick="loadDemo()" style="font-size:12px">
-          ✨ Load Demo Script
-        </button>
-      </div>
-
-      <div id="parse-preview" style="margin-top:14px;display:none">
-        <div class="section-label">Parsed Messages</div>
-        <div class="parsed-preview" id="parsed-list"></div>
-      </div>
-    </div>
-
     <div class="card" style="margin-bottom:20px">
       <div class="card-title">🎨 Visual Settings</div>
-
       <div class="section-label" style="margin-top:0">Theme</div>
       <div class="theme-toggle">
-        <button class="theme-btn active" onclick="setTheme('wa', this)">
-          💬 WhatsApp
-        </button>
-        <button class="theme-btn" onclick="setTheme('im', this)">
-          🔵 iMessage
-        </button>
+        <button class="theme-btn active" onclick="setTheme('wa',this)">💬 WhatsApp</button>
+        <button class="theme-btn" onclick="setTheme('im',this)">🔵 iMessage</button>
       </div>
-
       <div class="section-label">Animation Speed</div>
       <div class="speed-row">
-        <div class="speed-btn active" onclick="setSpeed('slow', this)">🐢 Slow</div>
-        <div class="speed-btn" onclick="setSpeed('normal', this)">🚶 Normal</div>
-        <div class="speed-btn" onclick="setSpeed('fast', this)">⚡ Fast</div>
+        <div class="speed-btn active" onclick="setSpeed('slow',this)">🐢 Slow</div>
+        <div class="speed-btn" onclick="setSpeed('normal',this)">🚶 Normal</div>
+        <div class="speed-btn" onclick="setSpeed('fast',this)">⚡ Fast</div>
       </div>
+      <div class="form-group"><label>Contact Name (shown in header)</label><input type="text" id="contact-name" placeholder="e.g. Dito 💀" value=""/></div>
 
       <div class="form-group">
-        <label>Contact Name (shown in header)</label>
-        <input type="text" id="contact-name" placeholder="e.g. Dito 💀" value="" />
+        <label>Profile Picture</label>
+        <input type="file" id="pp-file-input" accept="image/*" onchange="handleProfilePic(this)">
+        <label class="pp-upload-label" for="pp-file-input">
+          <div class="pp-preview" id="pp-preview">
+            <svg class="pp-preview-svg" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+          </div>
+          <div class="pp-upload-text">
+            <strong>Tap to upload photo</strong>
+            JPG, PNG — will appear in the chat header
+          </div>
+        </label>
       </div>
     </div>
 
     <div class="card">
       <div class="card-title">🎬 Render Controls</div>
-      <div class="card-desc">Preview dulu, lalu pilih format export sesuai device kamu.</div>
-
+      <div class="card-desc">Preview dulu, lalu pilih format export.</div>
       <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
-        <div id="status-badge" class="status-badge status-idle">
-          <div class="pulse"></div>
-          <span id="status-text">Ready</span>
-        </div>
-        <button class="btn btn-ghost" onclick="resetChat()" style="font-size:12px;padding:7px 14px">
-          ↺ Reset
-        </button>
+        <div id="status-badge" class="status-badge status-idle"><div class="pulse"></div><span id="status-text">Ready</span></div>
+        <button class="btn btn-ghost" onclick="resetChat()" style="font-size:12px;padding:7px 14px">↺ Reset</button>
       </div>
-
       <div class="progress-container" style="margin-bottom:16px">
-        <div class="progress-label">
-          <span id="progress-label-text">Waiting...</span>
-          <span id="progress-pct">0%</span>
-        </div>
-        <div class="progress-bar">
-          <div class="progress-fill" id="progress-fill"></div>
-        </div>
+        <div class="progress-label"><span id="progress-label-text">Waiting...</span><span id="progress-pct">0%</span></div>
+        <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
-
-      <!-- Preview button -->
-      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:12px;padding:13px">
-        ▶ Preview Animation
-      </button>
-
-      <!-- Export options -->
+      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:12px;padding:13px">▶ Preview Animation</button>
       <div class="section-label">Export Format</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-
-        <!-- GIF — mobile friendly -->
         <div class="export-card" id="export-gif-card">
           <div class="export-icon">📱</div>
           <div class="export-label">GIF</div>
           <div class="export-desc">Works on all devices<br>iOS · Android · Web</div>
-          <button class="btn btn-success export-btn" id="gif-btn" onclick="renderGif()" style="width:100%;justify-content:center;margin-top:10px;font-size:12px">
-            ⬇ Download GIF
-          </button>
+          <button class="btn btn-success" id="gif-btn" onclick="renderGif()" style="width:100%;justify-content:center;margin-top:10px;font-size:12px">⬇ Download GIF</button>
         </div>
-
-        <!-- WebM — desktop -->
         <div class="export-card" id="export-webm-card">
           <div class="export-icon">💻</div>
           <div class="export-label">WebM</div>
           <div class="export-desc">Best quality<br>Desktop Chrome/Firefox</div>
-          <button class="btn btn-success export-btn" id="render-btn" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;background:linear-gradient(135deg,#2563eb,#3b82f6);box-shadow:0 4px 14px rgba(59,130,246,0.3)">
-            ⬇ Download WebM
-          </button>
+          <button class="btn" id="render-btn" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;box-shadow:0 4px 14px rgba(59,130,246,0.3)">⬇ Download WebM</button>
         </div>
       </div>
-
-      <div id="export-note" style="padding:10px 12px;background:var(--surface2);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.7">
+      <div style="padding:10px 12px;background:var(--surface2);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.7">
         <strong style="color:var(--accent2)" id="note-title">💡 Tips:</strong>
         <span id="note-body">GIF cocok untuk HP & story. WebM kualitas lebih tinggi untuk edit di laptop.</span>
       </div>
     </div>
   </div>
 
-  <!-- Right: Phone — stays fixed while left scrolls -->
   <div class="phase2-right">
     <div class="phone-col">
-      <div class="phone-wrapper" id="phone-wrapper">
+      <div class="phone-wrapper">
         <div class="phone-frame theme-wa" id="phone-frame">
-          <!-- Notch -->
-          <div class="phone-notch">
-            <div class="notch-cam"></div>
-            <div class="notch-speaker"></div>
-          </div>
-          <!-- Buttons -->
-          <div class="phone-btn-right"></div>
-          <div class="phone-btn-left1"></div>
-          <div class="phone-btn-left2"></div>
-          <div class="phone-btn-left3"></div>
-
-          <!-- Chat Viewport -->
           <div id="chat-viewport">
 
-            <!-- WA Header (shown in WA theme) -->
+            <!-- ══ WA Header ══ -->
             <div class="chat-header" id="wa-header">
-              <div class="wa-back">‹</div>
-              <div class="avatar avatar-b" id="header-avatar-wa" style="width:38px;height:38px;font-size:15px">?</div>
+              <!-- Back pill -->
+              <div class="wa-back-pill">
+                <span class="wa-back-chevron">‹</span>
+                <span class="wa-back-count">8</span>
+              </div>
+              <!-- Avatar: supports uploaded profile pic -->
+              <div class="wa-avatar-circle" id="wa-avatar-wrap">
+                <svg id="wa-avatar-icon" class="pp-preview-svg" viewBox="0 0 24 24"><path d="M12 12c2.7 0 4.8-2.1 4.8-4.8S14.7 2.4 12 2.4 7.2 4.5 7.2 7.2 9.3 12 12 12zm0 2.4c-3.2 0-9.6 1.6-9.6 4.8v2.4h19.2v-2.4c0-3.2-6.4-4.8-9.6-4.8z"/></svg>
+              </div>
+              <!-- Name + status -->
               <div class="header-info">
                 <div class="chat-header-name" id="header-name-wa">Chat Preview</div>
-                <div class="chat-header-status" id="header-status">online</div>
+                <div class="chat-header-status" id="header-status">tap here for contact info</div>
               </div>
-              <div class="header-icons">
-                <div class="wa-icon-pill">
-                  <svg viewBox="0 0 24 24"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
-                  <svg viewBox="0 0 24 24"><path d="M6.6 10.8c1.4 2.8 3.8 5.1 6.6 6.6l2.2-2.2c.3-.3.7-.4 1-.2 1.1.4 2.3.6 3.6.6.6 0 1 .4 1 1V20c0 .6-.4 1-1 1-9.4 0-17-7.6-17-17 0-.6.4-1 1-1h3.5c.6 0 1 .4 1 1 0 1.3.2 2.5.6 3.6.1.3 0 .7-.2 1L6.6 10.8z"/></svg>
+              <!-- Right pill: video + phone -->
+              <div class="wa-right-pill">
+                <!-- Video camera icon -->
+                <svg viewBox="0 0 24 24">
+                  <path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/>
+                </svg>
+                <!-- Phone handset icon -->
+                <svg viewBox="0 0 24 24">
+                  <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                </svg>
+              </div>
+            </div>
+
+            <!-- iMessage Header (hidden by default) -->
+            <div class="chat-header" id="im-header" style="display:none">
+              <div class="im-back-area">
+                <span class="im-back-chevron">‹</span>
+                <span class="im-back-count">38</span>
+              </div>
+              <div class="header-info" style="display:flex;flex-direction:column;align-items:center;gap:3px">
+                <div class="avatar avatar-b" id="header-avatar-im" style="width:44px;height:44px;font-size:18px">?</div>
+                <div class="chat-header-name" id="header-name-im">Chat Preview<span class="im-chevron"> ›</span></div>
+              </div>
+              <div class="im-video-area">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#007aff"><path d="M17 10.5V7c0-.55-.45-1-1-1H4c-.55 0-1 .45-1 1v10c0 .55.45 1 1 1h12c.55 0 1-.45 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+              </div>
+            </div>
+
+            <!-- Chat messages -->
+            <div class="chat-messages" id="chat-messages">
+              <div id="empty-state" style="text-align:center;color:rgba(255,255,255,0.2);font-size:11px;margin-top:80px;line-height:2;font-family:-apple-system,sans-serif">Parse a script and hit<br>▶ Preview to start</div>
+            </div>
+
+            <!-- ══ WA Input Bar — outline SVGs, no green mic bg ══ -->
+            <div class="chat-input-bar" id="wa-input-bar">
+              <!-- Plus: outline + -->
+              <div class="wa-plus">
+                <svg viewBox="0 0 24 24" stroke="#8696a0" fill="none" stroke-width="1.5" stroke-linecap="round">
+                  <path d="M12 5v14M5 12h14"/>
+                </svg>
+              </div>
+              <!-- Input pill -->
+              <div class="chat-input-pill">
+                <span class="wa-input-text">Message</span>
+                <!-- Sticker icon: outline rounded square with face -->
+                <div class="wa-sticker-btn">
+                  <svg viewBox="0 0 24 24">
+                    <rect x="3" y="3" width="18" height="18" rx="5"/>
+                    <path d="M8 14s1.5 2 4 2 4-2 4-2"/>
+                    <circle cx="9" cy="10" r="1"/>
+                    <circle cx="15" cy="10" r="1"/>
+                  </svg>
                 </div>
               </div>
-            </div>
-
-            <!-- iMessage Header (shown in iMessage theme) -->
-            <div class="chat-header" id="im-header" style="display:none">
-              <div class="im-back-btn">‹</div>
-              <div class="header-info" style="text-align:center;display:flex;flex-direction:column;align-items:center;gap:3px">
-                <div class="avatar avatar-b" id="header-avatar-im" style="width:52px;height:52px;font-size:20px">?</div>
-                <div class="chat-header-name" id="header-name-im">Chat Preview</div>
+              <!-- Camera: outline camera body + lens -->
+              <div class="wa-cam-btn">
+                <svg viewBox="0 0 24 24">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/>
+                  <circle cx="12" cy="13" r="4"/>
+                </svg>
               </div>
-              <div class="im-video-btn">
-                <svg width="16" height="16" viewBox="0 0 24 24" fill="white"><path d="M17 10.5V7a1 1 0 0 0-1-1H4a1 1 0 0 0-1 1v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-3.5l4 4v-11l-4 4z"/></svg>
+              <!-- Mic: outline mic shape, transparent background -->
+              <div class="wa-mic-btn">
+                <svg viewBox="0 0 24 24">
+                  <rect x="9" y="2" width="6" height="12" rx="3"/>
+                  <path d="M5 10a7 7 0 0 0 14 0"/>
+                  <path d="M12 19v3"/>
+                  <path d="M9 22h6"/>
+                </svg>
               </div>
-            </div>
-
-            <div class="chat-messages" id="chat-messages">
-              <div id="empty-state" style="text-align:center;color:rgba(255,255,255,0.25);font-size:12px;margin-top:80px;line-height:2;font-family:-apple-system,sans-serif">
-                Parse a script and hit<br>▶ Preview to start
-              </div>
-            </div>
-
-            <!-- WA Input Bar -->
-            <div class="chat-input-bar" id="wa-input-bar">
-              <div class="wa-input-plus">+</div>
-              <div class="chat-input-pill">
-                <span style="opacity:0.5;font-size:16px">😊</span>
-                <span style="flex:1">Message</span>
-                <span style="opacity:0.5;font-size:15px">📎</span>
-              </div>
-              <div class="wa-mic">🎤</div>
             </div>
 
             <!-- iMessage Input Bar -->
             <div class="chat-input-bar" id="im-input-bar" style="display:none">
-              <div class="im-plus-btn">+</div>
+              <div class="im-plus-circle">+</div>
+              <div class="im-app-btn" style="font-size:13px;font-weight:700">A</div>
               <div class="chat-input-pill">
                 <span style="flex:1;color:#636366;font-size:14px">iMessage</span>
-                <span style="opacity:0.5;font-size:14px">🎤</span>
+              </div>
+              <div class="im-voice-btn">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="#8e8e93"><path d="M12 14c1.66 0 3-1.34 3-3V5c0-1.66-1.34-3-3-3S9 3.34 9 5v6c0 1.66 1.34 3 3 3zm5.3-3c0 3-2.54 5.1-5.3 5.1S6.7 14 6.7 11H5c0 3.41 2.72 6.23 6 6.72V21h2v-3.28c3.28-.48 6-3.3 6-6.72h-1.7z"/></svg>
               </div>
             </div>
 
@@ -1693,761 +935,1104 @@ color: var(–accent2);
 ```
 
   </div>
+</div>
 
 <script>
-// ==========================================
-// STATE
-// ==========================================
-let currentPhase = 1;
+// ── State ──────────────────────────────────────────────────
 let currentTheme = 'wa';
 let currentSpeed = 'slow';
 let parsedMessages = [];
-let senderA = '';
-let senderB = '';
-let isPlaying = false;
-let isRecording = false;
+let senderA = '', senderB = '';
+let isPlaying = false, isRecording = false;
 let playbackAbort = false;
-let mediaRecorder = null;
-let recordedChunks = [];
-let animationFrameId = null;
 let playbackTimeout = null;
+let mediaRecorder = null, recordedChunks = [];
+
+// Canvas state (updated during playback, read by export engines)
+let cvMessages = [];       // [{sender,text,time,isLast}]
+let cvTypingSender = null; // string|null
 
 const speedMap = {
-  slow: { cps: 6, typingMin: 1200, typingMax: 2800, gap: 600 },
-  normal: { cps: 10, typingMin: 700, typingMax: 1600, gap: 350 },
-  fast: { cps: 20, typingMin: 300, typingMax: 700, gap: 150 }
+  slow:   { cps:6,  typingMin:1200, typingMax:2800, gap:600 },
+  normal: { cps:10, typingMin:700,  typingMax:1600, gap:350 },
+  fast:   { cps:20, typingMin:300,  typingMax:700,  gap:150 }
 };
 
-// ==========================================
-// PHASE SWITCHING
-// ==========================================
-function switchPhase(n) {
-  currentPhase = n;
-  document.querySelectorAll('.phase-panel').forEach((p, i) => {
-    p.classList.toggle('active', i + 1 === n);
-  });
-  document.querySelectorAll('.phase-tab').forEach((t, i) => {
-    t.classList.toggle('active', i + 1 === n);
-  });
+// ── Helpers ────────────────────────────────────────────────
+function switchPhase(n){
+  document.querySelectorAll('.phase-panel').forEach((p,i)=>p.classList.toggle('active',i+1===n));
+  document.querySelectorAll('.phase-tab').forEach((t,i)=>t.classList.toggle('active',i+1===n));
+}
+function setStatus(type,text){
+  document.getElementById('status-badge').className=`status-badge status-${type}`;
+  document.getElementById('status-text').textContent=text;
+}
+function updateProgress(pct,label){
+  document.getElementById('progress-fill').style.width=pct+'%';
+  document.getElementById('progress-pct').textContent=pct+'%';
+  document.getElementById('progress-label-text').textContent=label;
+}
+function escapeHtml(s){return s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}
+function getTime(){return new Date().toLocaleTimeString('en-US',{hour:'2-digit',minute:'2-digit',hour12:false})}
+function getTypingDuration(text){
+  const sp=speedMap[currentSpeed];
+  return Math.min(Math.max((text.length/sp.cps)*1000,sp.typingMin),sp.typingMax);
+}
+function getGapDuration(){return speedMap[currentSpeed].gap+Math.random()*200}
+function sleep(ms){return new Promise(r=>{playbackTimeout=setTimeout(r,ms)})}
+function scrollToBottom(){const m=document.getElementById('chat-messages');m.scrollTop=m.scrollHeight}
+
+let toastTimer;
+function showToast(msg){
+  const t=document.getElementById('toast');
+  t.textContent=msg;t.classList.add('show');
+  clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.remove('show'),3000);
 }
 
-// ==========================================
-// PHASE 1: PROMPT BUILDER
-// ==========================================
-const frameworks = {
+// ── Phase 1: Prompt Builder ────────────────────────────────
+// ══════════════════════════════════════════════════════
+// PHASE 1 DATA — TikTok Content Strategist + Behavioral Copywriter
+// ══════════════════════════════════════════════════════
+
+const CATEGORIES = [
+  { id:'relationship', emoji:'💔', name:'Relationship', desc:'Selingkuh, ghosting, toxic situationship, putus nyambung' },
+  { id:'friendship',   emoji:'👥', name:'Friendship',   desc:'Teman fake, drama geng, pengkhianatan sahabat' },
+  { id:'money',        emoji:'💰', name:'Money Drama',  desc:'Utang ga dibayar, minta pinjam terus, pelit ekstrem' },
+  { id:'family',       emoji:'👨‍👩‍👧', name:'Family',       desc:'Drama ortu, kakak/adik, mertua, ekspektasi keluarga' },
+  { id:'work',         emoji:'🏢', name:'Work/Kantor',  desc:'Rekan toxic, bos semena-mena, drama kantor' },
+  { id:'horror',       emoji:'😱', name:'Horror/Thriller', desc:'Orang asing, stalker, misteri, nuansa creepy' },
+  { id:'comedy',       emoji:'😂', name:'Comedy',       desc:'Salah kirim chat, miskomunikasi, situasi absurd' },
+  { id:'plottwist',    emoji:'🔥', name:'Pure Plot Twist', desc:'Setup biasa → ending yang membalik segalanya' },
+];
+
+const TONES = [
+  { id:'drama',     icon:'🎭', name:'Drama Meledak',    desc:'Emosi tinggi, konfrontatif' },
+  { id:'cold',      icon:'🧊', name:'Cold & Ghosting',  desc:'Jawaban singkat, dingin' },
+  { id:'passive',   icon:'😤', name:'Passive Aggressive', desc:'Sindiran halus, tersembunyi' },
+  { id:'darkhumor', icon:'😈', name:'Humor Gelap',      desc:'Lucu tapi menusuk' },
+  { id:'wholesome', icon:'🥺', name:'Wholesome Twist',  desc:'Mengharukan, unexpected positif' },
+  { id:'cringe',    icon:'😬', name:'Cringe Secondhand', desc:'Bikin penonton merinding sendiri' },
+];
+
+const AUDIENCES = [
+  { id:'genz',     label:'🧑 Gen Z (15–24)' },
+  { id:'young',    label:'💼 Young Adult (25–34)' },
+  { id:'universal',label:'🌍 Universal / Semua Umur' },
+];
+
+const LENGTH_MAP = {
+  short:  { label:'Short',  range:'8–12 pesan', seconds:'±30 detik' },
+  medium: { label:'Medium', range:'13–18 pesan', seconds:'±60 detik' },
+  long:   { label:'Long',   range:'19–25 pesan', seconds:'±90 detik' },
+};
+
+const FRAMEWORKS = {
   gossip: {
-    name: "The Gossip Bait",
-    instructions: `STRUCTURE: Start the chat IN THE MIDDLE of a heated conflict — no introduction, no context. The viewer should feel like they accidentally opened someone's private conversation mid-fight. Use short, sharp, emotionally charged messages. The first message should be confrontational or accusatory. Build tension fast. End on an unresolved emotional peak.`
+    name: 'The Gossip Bait',
+    tiktok_hook: 'Mulai IN MEDIAS RES — di tengah konflik tanpa intro. Pesan pertama harus langsung konfrontatif atau mengejutkan. Penonton harus merasa masuk ke percakapan orang lain yang sedang panas.',
+    retention: 'Gunakan pesan-pesan pendek dan tajam. Jangan ada basa-basi. Setiap pesan harus membuat penonton bertanya-tanya apa yang akan terjadi selanjutnya.',
   },
   cliffhanger: {
-    name: "The Cliffhanger",
-    instructions: `STRUCTURE: Build the conversation slowly. Use deliberate pacing — some messages should be very short ("..."), "tunggu", "sebentar". Create at least two moments where the reader thinks something is coming, but it delays. The final reveal should feel earned. The last message should leave a burning question unanswered.`
+    name: 'The Cliffhanger',
+    tiktok_hook: 'Bangun suspensi secara bertahap. Gunakan delay yang disengaja — pesan singkat seperti "..." atau "tunggu" atau "sebentar". Buat penonton takut untuk skip karena mereka tidak mau ketinggalan momen.',
+    retention: 'Setiap 3–4 pesan harus ada micro-cliffhanger kecil. Ending harus menggantung atau baru setengah terjawab.',
   },
   plottwist: {
-    name: "The Plot Twist Drop",
-    instructions: `STRUCTURE: Start with a completely normal, innocent conversation. Make it feel mundane for the first half. Then, in the final 3-4 messages, introduce ONE single piece of information that completely reframes everything that came before it. The twist must make the reader want to scroll back and re-read. Design it to trigger "wait WHAT?!" comments.`
-  }
+    name: 'The Plot Twist Drop',
+    tiktok_hook: 'Setup terlihat innocent dan normal di 70% pertama. Penonton harus merasa ini chat biasa. Lalu di akhir, satu pesan membalik segalanya. Desain untuk reaksi "WAIT WHAT?!" dan tag teman.',
+    retention: 'Twist harus bisa di-reframe — setelah tahu twist, kalau dibaca ulang dari awal, semua tanda-tandanya sudah ada. Ini yang bikin orang share.',
+  },
+  slowburn: {
+    name: 'The Slow Burn',
+    tiktok_hook: 'Mulai tenang dan normal. Bangun emosi perlahan seperti tekanan yang naik. Penonton harus bisa merasakan frustrasi atau sakit hati yang menumpuk sebelum ledakan di akhir.',
+    retention: 'Gunakan nada yang semakin berubah — dari ramah menjadi tegang menjadi hancur. Cocok untuk konten yang memancing empati dan komentar "ini aku banget".',
+  },
 };
 
-function generatePrompt() {
-  const topic = document.getElementById('topic-input').value.trim();
-  const nameA = document.getElementById('name-a').value.trim() || 'Alex';
-  const nameB = document.getElementById('name-b').value.trim() || 'Jordan';
-  const appStyle = document.getElementById('app-style').value;
-  const lang = document.getElementById('script-lang').value;
-  const fw = document.querySelector('input[name="framework"]:checked').value;
-  const framework = frameworks[fw];
+const TONE_INSTRUCTIONS = {
+  drama:     'Tulis dengan emosi yang meledak-ledak. Gunakan huruf kapital untuk penekanan, tanda seru, dan bahasa yang intens.',
+  cold:      'Salah satu karakter harus menjawab dengan sangat singkat, dingin, dan disengaja. Jawaban seperti "ok", "terserah", "yaudah" sangat efektif.',
+  passive:   'Gunakan sindiran halus yang terasa manis di permukaan tapi menyakitkan di dalamnya. "Oh gitu ya, oke deh" atau "ga apa sih, udah biasa".',
+  darkhumor: 'Campur humor dengan situasi yang sebenarnya serius. Buat penonton tertawa sambil ngeri.',
+  wholesome: 'Balik ekspektasi — setelah semua drama, ending-nya mengharukan atau positif secara unexpected.',
+  cringe:    'Buat salah satu karakter melakukan atau mengatakan sesuatu yang sangat memalukan. Penonton harus merasa second-hand embarrassment.',
+};
 
-  if (!topic) {
-    showToast('⚠️ Please enter a chat topic first!');
-    return;
+const AUDIENCE_INSTRUCTIONS = {
+  genz:      'Gunakan bahasa Gen Z Indonesia yang authentic: "anjir", "gila sih", "parah", "literally", "no cap", "sus", "yikes". Skenario seputar pertemanan, crush, dan drama sosial media.',
+  young:     'Bahasa lebih dewasa tapi tetap casual. Skenario seputar karir, hubungan serius, finansial, dan tanggung jawab orang dewasa muda.',
+  universal: 'Gunakan bahasa yang relate ke semua umur. Hindari slang terlalu spesifik. Fokus pada emosi universal: pengkhianatan, kecewa, lega, marah yang semua orang pernah rasakan.',
+};
+
+// State
+let selectedCategory = 'relationship';
+let selectedTone = 'drama';
+let selectedAudience = 'genz';
+let selectedLength = 'short';
+
+// Render grids
+function renderPhase1UI(){
+  // Categories
+  const catGrid = document.getElementById('category-grid');
+  if(catGrid){
+    catGrid.innerHTML = CATEGORIES.map(c => `
+      <div class="cat-card ${c.id===selectedCategory?'selected':''}" onclick="selectCategory('${c.id}',this)">
+        <div class="cat-emoji">${c.emoji}</div>
+        <div class="cat-name">${c.name}</div>
+        <div class="cat-desc">${c.desc}</div>
+      </div>`).join('');
   }
+  // Tones
+  const toneGrid = document.getElementById('tone-grid');
+  if(toneGrid){
+    toneGrid.innerHTML = TONES.map(t => `
+      <div class="tone-chip ${t.id===selectedTone?'selected':''}" onclick="selectTone('${t.id}',this)">
+        <span class="tone-chip-icon">${t.icon}</span>
+        <span class="tone-chip-name">${t.name}</span>
+        <span class="tone-chip-desc">${t.desc}</span>
+      </div>`).join('');
+  }
+  // Audiences
+  const audGrid = document.getElementById('audience-grid');
+  if(audGrid){
+    audGrid.innerHTML = AUDIENCES.map(a => `
+      <div class="aud-chip ${a.id===selectedAudience?'selected':''}" onclick="selectAudience('${a.id}',this)">${a.label}</div>`).join('');
+  }
+  updateBriefSummary();
+}
 
-  const prompt = `You are a viral short-form content writer specializing in fake chat drama scripts for TikTok, Instagram Reels, and YouTube Shorts.
+function selectCategory(id){ selectedCategory=id; renderPhase1UI(); }
+function selectTone(id){ selectedTone=id; renderPhase1UI(); }
+function selectAudience(id){ selectedAudience=id; renderPhase1UI(); }
+function setLength(len, el){
+  selectedLength = len;
+  document.querySelectorAll('.length-btn').forEach(b => b.classList.remove('active'));
+  el.classList.add('active');
+  updateBriefSummary();
+}
 
-TASK: Write a highly realistic, emotionally engaging chat conversation script for a ${appStyle} fake chat video.
+function updateBriefSummary(){
+  const el = document.getElementById('brief-summary');
+  if(!el) return;
+  const cat = CATEGORIES.find(c=>c.id===selectedCategory);
+  const tone = TONES.find(t=>t.id===selectedTone);
+  const aud = AUDIENCES.find(a=>a.id===selectedAudience);
+  const len = LENGTH_MAP[selectedLength];
+  el.innerHTML = [
+    cat  ? `<span class="brief-chip">${cat.emoji} ${cat.name}</span>` : '',
+    tone ? `<span class="brief-chip">${tone.icon} ${tone.name}</span>` : '',
+    aud  ? `<span class="brief-chip">${aud.label}</span>` : '',
+    len  ? `<span class="brief-chip">⏱ ${len.range}</span>` : '',
+  ].join('');
+}
 
-TOPIC: ${topic}
+function generatePrompt(){
+  const topic = document.getElementById('topic-input').value.trim();
+  if(!topic){ showToast('⚠️ Isi topik dulu!'); return; }
 
-CHARACTERS:
-- ${nameA} (starts the conversation or is the main protagonist)
-- ${nameB} (the antagonist, enabler, or twist revealer)
+  const desc    = document.getElementById('topic-desc').value.trim();
+  const nameA   = document.getElementById('name-a').value.trim() || 'Alex';
+  const nameB   = document.getElementById('name-b').value.trim() || 'Jordan';
+  const lang    = document.getElementById('script-lang').value;
+  const appStyle= document.getElementById('app-style').value;
+  const fw      = document.querySelector('input[name="framework"]:checked').value;
 
-LANGUAGE: Write in ${lang}. Use natural texting habits: abbreviations, typos are fine, slang, no perfect grammar. Make it sound REAL, not written.
+  const cat     = CATEGORIES.find(c=>c.id===selectedCategory);
+  const tone    = TONES.find(t=>t.id===selectedTone);
+  const aud     = AUDIENCES.find(a=>a.id===selectedAudience);
+  const len     = LENGTH_MAP[selectedLength];
+  const fwData  = FRAMEWORKS[fw];
 
-NARRATIVE FRAMEWORK: ${framework.name}
-${framework.instructions}
+  const msgCount = selectedLength==='short' ? '8–12' : selectedLength==='medium' ? '13–18' : '19–25';
 
-SCRIPT REQUIREMENTS:
-1. Write between 12-20 message exchanges total
-2. Vary message length — mix very short reactions (1-5 words) with longer explanatory messages
-3. Include at least one emotionally raw moment
-4. Make the dialogue feel authentic to how real people text, not how writers write
-5. DO NOT add any stage directions, timestamps, or scene descriptions
+  const prompt =
+`Kamu adalah seorang SHORT-FORM CONTENT STRATEGIST, BEHAVIORAL COPYWRITER, dan TIKTOK ALGORITHM SPECIALIST yang sangat berpengalaman dalam membuat konten viral untuk TikTok Indonesia.
 
-OUTPUT FORMAT (strict — follow this exactly, nothing else):
-${nameA}: [message text]
-${nameB}: [message text]
-${nameA}: [message text]
-...and so on
+Tugasmu: Tulis sebuah skrip chat drama palsu (fake chat) yang SANGAT realistis, emosional, dan viral untuk konten TikTok.
 
-CRITICAL: Output ONLY the script lines. No preamble, no explanation, no commentary, no quotation marks around the whole thing. Just the raw script lines.`;
+━━━ BRIEF KREATOR ━━━
+Platform Target : TikTok (konten vertical 9:16)
+Aplikasi Chat   : ${appStyle}
+Topik           : ${topic}${desc ? `\nKonteks Tambahan: ${desc}` : ''}
+Kategori Drama  : ${cat.name} — ${cat.desc}
+Karakter A      : ${nameA} (karakter utama / sudut pandang penonton)
+Karakter B      : ${nameB} (antagonis / karakter pemicu konflik)
+Bahasa          : ${lang}
+Panjang         : ${msgCount} pesan total (durasi video ${len.seconds})
+
+━━━ TARGET AUDIENCE ━━━
+${aud.label}
+${AUDIENCE_INSTRUCTIONS[selectedAudience]}
+
+━━━ TONE ━━━
+${tone.icon} ${tone.name}: ${TONE_INSTRUCTIONS[selectedTone]}
+
+━━━ VIRALITY FRAMEWORK ━━━
+Framework: ${fwData.name}
+Hook Strategy: ${fwData.tiktok_hook}
+Retention Tactic: ${fwData.retention}
+
+━━━ INSTRUKSI WAJIB ━━━
+1. BAHASA: Tulis seperti orang sungguhan texting — typo boleh, singkatan wajar, tanda baca tidak sempurna. JANGAN terasa seperti ditulis oleh AI.
+2. PACING: Variasikan panjang pesan. Campur pesan 1–3 kata dengan pesan yang lebih panjang untuk ritme yang natural.
+3. EMOSI: Minimal ada 1 momen yang membuat penonton berhenti scroll karena merasa "gila sih", "ini aku banget", atau "WHAT?!"
+4. REALISME: Hindari dialog yang terlalu rapi atau sastra. Orang sungguhan tidak menjelaskan perasaannya dengan sempurna.
+5. HOOK 3 DETIK: Pesan pertama harus langsung menarik — tidak ada basa-basi atau perkenalan.
+
+━━━ FORMAT OUTPUT ━━━
+WAJIB ikuti format ini dengan tepat. TIDAK ADA teks lain selain baris dialog:
+
+${nameA}: [pesan]
+${nameB}: [pesan]
+${nameA}: [pesan]
+...
+
+PENTING: Output HANYA baris dialog saja. Tidak ada judul, tidak ada komentar, tidak ada penjelasan, tidak ada tanda kutip di luar dialog.`;
 
   document.getElementById('prompt-output').textContent = prompt;
+  updateBriefSummary();
 }
 
-function copyPrompt() {
-  const output = document.getElementById('prompt-output').textContent;
-  if (!output || output.includes('Fill in the fields')) {
-    showToast('⚠️ Generate a prompt first!');
-    return;
-  }
-  navigator.clipboard.writeText(output).then(() => {
-    const fb = document.getElementById('copy-feedback');
-    fb.style.display = 'inline';
-    setTimeout(() => { fb.style.display = 'none'; }, 2000);
-    showToast('✓ Prompt copied to clipboard!');
+function copyPrompt(){
+  const t = document.getElementById('prompt-output').textContent;
+  if(!t || t.includes('↑')){ showToast('⚠️ Generate prompt dulu!'); return; }
+  navigator.clipboard.writeText(t).then(()=>{
+    document.getElementById('copy-feedback').style.display='inline';
+    setTimeout(()=>document.getElementById('copy-feedback').style.display='none',2000);
+    showToast('✓ Prompt di-copy!');
   });
 }
 
-// ==========================================
-// PHASE 2: SMART PARSER
-// ==========================================
-
-/**
- * Two-pass parser:
- * Pass 1: Scan all lines matching /^(\S[^:]{0,40}):\s+/ to extract unique speaker names (max 2)
- * Pass 2: Use those known names as anchors — split only on "Name: " at start of line
- * This makes colons inside messages completely safe.
- */
-function parseScript(raw) {
-  const lines = raw.split('\n').map(l => l.trim()).filter(l => l.length > 0);
-
-  // Pass 1: Detect speaker names
-  const nameRegex = /^([^:\n]{1,40}):\s+(.+)/;
-  const nameCount = {};
-  const nameOrder = [];
-
-  for (const line of lines) {
-    const m = line.match(nameRegex);
-    if (m) {
-      const name = m[1].trim();
-      // Filter out lines where "name" is suspiciously long (probably not a name)
-      if (name.split(' ').length <= 4 && name.length < 35) {
-        if (!nameCount[name]) {
-          nameCount[name] = 0;
-          nameOrder.push(name);
-        }
-        nameCount[name]++;
+// ── Phase 2: Parser ────────────────────────────────────────
+function parseScript(raw){
+  const lines=raw.split('\n').map(l=>l.trim()).filter(l=>l.length>0);
+  const nameRe=/^([^:\n]{1,40}):\s+(.+)/;
+  const nameCount={},nameOrder=[];
+  for(const line of lines){
+    const m=line.match(nameRe);
+    if(m){
+      const n=m[1].trim();
+      if(n.split(' ').length<=4&&n.length<35){
+        if(!nameCount[n]){nameCount[n]=0;nameOrder.push(n)}
+        nameCount[n]++;
       }
     }
   }
-
-  // Take top 2 most frequent names (in order of first appearance)
-  const detectedNames = nameOrder.slice(0, 2);
-
-  if (detectedNames.length < 1) return { messages: [], senderA: '', senderB: '' };
-
-  senderA = detectedNames[0];
-  senderB = detectedNames[1] || '';
-
-  // Pass 2: Parse with known names as anchors
-  const messages = [];
-  let currentSpeaker = null;
-  let currentText = '';
-
-  // Build regex anchored to known names
-  const escapeRe = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
-  const speakerPattern = new RegExp(`^(${detectedNames.map(escapeRe).join('|')}):\\s+(.+)`);
-
-  for (const line of lines) {
-    const m = line.match(speakerPattern);
-    if (m) {
-      if (currentSpeaker && currentText) {
-        messages.push({ sender: currentSpeaker, text: currentText.trim() });
-      }
-      currentSpeaker = m[1].trim();
-      currentText = m[2].trim();
-    } else if (currentSpeaker && line) {
-      // Continuation line (no speaker prefix)
-      currentText += ' ' + line;
-    }
+  const names=nameOrder.slice(0,2);
+  if(!names.length)return{messages:[],senderA:'',senderB:''};
+  senderA=names[0];senderB=names[1]||'';
+  const esc=s=>s.replace(/[.*+?^${}()|[\]\\]/g,'\\$&');
+  const spRe=new RegExp(`^(${names.map(esc).join('|')}):\\s+(.+)`);
+  const messages=[];let cur=null,txt='';
+  for(const line of lines){
+    const m=line.match(spRe);
+    if(m){if(cur&&txt)messages.push({sender:cur,text:txt.trim()});cur=m[1].trim();txt=m[2].trim()}
+    else if(cur&&line)txt+=' '+line;
   }
-
-  if (currentSpeaker && currentText) {
-    messages.push({ sender: currentSpeaker, text: currentText.trim() });
-  }
-
-  return { messages, senderA, senderB };
+  if(cur&&txt)messages.push({sender:cur,text:txt.trim()});
+  return{messages,senderA,senderB};
 }
 
-function parseAndPreview() {
-  const raw = document.getElementById('script-input').value;
-  if (!raw.trim()) { showToast('⚠️ Paste a script first!'); return; }
-
-  const result = parseScript(raw);
-  parsedMessages = result.messages;
-
-  if (!parsedMessages.length) {
-    showToast('⚠️ Could not parse script. Check format: "Name: message"');
-    return;
-  }
-
-  // Update UI
-  const listEl = document.getElementById('parsed-list');
-  listEl.innerHTML = '';
-  parsedMessages.forEach(m => {
-    const isA = m.sender === senderA;
-    const div = document.createElement('div');
-    div.className = 'parsed-msg';
-    div.innerHTML = `<span class="parsed-name ${isA ? 'a' : 'b'}">${m.sender}</span><span class="parsed-text">${escapeHtml(m.text.substring(0, 60))}${m.text.length > 60 ? '…' : ''}</span>`;
-    listEl.appendChild(div);
+function parseAndPreview(){
+  const raw=document.getElementById('script-input').value;
+  if(!raw.trim()){showToast('⚠️ Paste a script first!');return}
+  const r=parseScript(raw);
+  parsedMessages=r.messages;
+  if(!parsedMessages.length){showToast('⚠️ Could not parse. Use "Name: message" format.');return}
+  const list=document.getElementById('parsed-list');
+  list.innerHTML='';
+  parsedMessages.forEach(m=>{
+    const d=document.createElement('div');d.className='parsed-msg';
+    d.innerHTML=`<span class="parsed-name ${m.sender===senderA?'a':'b'}">${m.sender}</span><span class="parsed-text">${escapeHtml(m.text.substring(0,60))}${m.text.length>60?'…':''}</span>`;
+    list.appendChild(d);
   });
-
-  document.getElementById('parse-preview').style.display = 'block';
-
-  // Update header
-  const contactInput = document.getElementById('contact-name').value.trim();
-  updateHeader(contactInput || senderB || senderA);
-
-  showToast(`✓ Parsed ${parsedMessages.length} messages • ${senderA} → ${senderB}`);
+  document.getElementById('parse-preview').style.display='block';
+  const cn=document.getElementById('contact-name').value.trim();
+  updateHeader(cn||senderB||senderA);
+  showToast(`✓ Parsed ${parsedMessages.length} messages · ${senderA} ↔ ${senderB}`);
 }
 
-function updateHeader(name) {
-  const initial = name ? name.charAt(0).toUpperCase() : '?';
-  // WA header
-  document.getElementById('header-avatar-wa').textContent = initial;
-  document.getElementById('header-name-wa').textContent = name || 'Chat Preview';
-  // iMessage header
-  document.getElementById('header-avatar-im').textContent = initial;
-  document.getElementById('header-name-im').textContent = name || 'Chat Preview';
+function updateHeader(name){
+  // WA: name only — avatar stays as SVG person icon
+  const nameWA = document.getElementById('header-name-wa');
+  if(nameWA) nameWA.textContent = name || 'Chat Preview';
+  // iMessage: avatar initial + name with chevron
+  const avatarIM = document.getElementById('header-avatar-im');
+  if(avatarIM) avatarIM.textContent = name ? name.charAt(0).toUpperCase() : '?';
+  const imName = document.getElementById('header-name-im');
+  if(imName){
+    imName.innerHTML = '';
+    imName.appendChild(document.createTextNode(name || 'Chat Preview'));
+    const chev = document.createElement('span');
+    chev.className = 'im-chevron';
+    chev.textContent = ' ›';
+    imName.appendChild(chev);
+  }
 }
 
-// ==========================================
-// CHAT ANIMATION HELPERS
-// ==========================================
-function getTypingDuration(text) {
-  const sp = speedMap[currentSpeed];
-  const chars = text.length;
-  const base = (chars / sp.cps) * 1000;
-  return Math.min(Math.max(base, sp.typingMin), sp.typingMax);
+function setTheme(theme,btn){
+  currentTheme=theme;
+  const f=document.getElementById('phone-frame');
+  f.className=f.className.replace(/theme-\w+/g,'');
+  f.classList.add(`theme-${theme}`);
+  document.getElementById('wa-header').style.display=theme==='wa'?'flex':'none';
+  document.getElementById('im-header').style.display=theme==='im'?'flex':'none';
+  document.getElementById('wa-input-bar').style.display=theme==='wa'?'flex':'none';
+  document.getElementById('im-input-bar').style.display=theme==='im'?'flex':'none';
+  document.querySelectorAll('.theme-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
 }
 
-function getGapDuration() {
-  const sp = speedMap[currentSpeed];
-  return sp.gap + Math.random() * 200;
+function setSpeed(speed,el){
+  currentSpeed=speed;
+  document.querySelectorAll('.speed-btn').forEach(b=>b.classList.remove('active'));
+  el.classList.add('active');
 }
 
-function getTime() {
-  const now = new Date();
-  return now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', hour12: false });
-}
+// SVG double-tick (blue read receipt)
+const SVG_TICKS = `<svg viewBox="0 0 18 11" width="18" height="11" fill="none">
+  <path d="M1 5.5L5.5 10L12.5 1" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+  <path d="M5 5.5L9.5 10L16.5 1" stroke="#53bdeb" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
 
-function escapeHtml(str) {
-  return str.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
-}
+// SVG single-tick (gray sent)
+const SVG_TICK_SINGLE = `<svg viewBox="0 0 12 11" width="12" height="11" fill="none">
+  <path d="M1 5.5L5.5 10L11 1" stroke="rgba(233,237,239,0.6)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>`;
 
-function createBubbleEl(msg, isLast) {
-  const isA = msg.sender === senderA;
-  const isSent = !isA; // senderB messages appear on right (sent side)
-
+function createBubbleEl(msg, isLast, prevSender){
+  const isSent = msg.sender !== senderA;
   const row = document.createElement('div');
-  row.className = `msg-row ${isSent ? 'msg-sent' : 'msg-recv'}`;
+  // sender-switch class adds top margin when sender changes
+  const senderChanged = prevSender !== msg.sender;
+  row.className = `msg-row ${isSent ? 'msg-sent' : 'msg-recv'}${senderChanged ? ' sender-switch' : ''}`;
 
   const bubble = document.createElement('div');
   bubble.className = 'bubble';
-  bubble.textContent = msg.text;
 
-  row.appendChild(bubble);
+  // Tail only on the LAST bubble of each sender's consecutive run
+  // We mark it now as has-tail; the NEXT message may remove it if same sender
+  // Actually: tail goes on the bubble that is LAST before sender changes
+  // Since we don't know the future, we add tail to all and remove from non-last via JS after
+  // Simpler: pass isLastOfRun flag from runPlayback
+  if(isLast && currentTheme === 'wa') {
+    bubble.classList.add('has-tail');
+  }
 
-  if (currentTheme === 'wa') {
-    // WA: timestamp + ticks inside bubble-meta below bubble
+  if(currentTheme === 'wa'){
+    bubble.appendChild(document.createTextNode(msg.text));
     const meta = document.createElement('div');
-    meta.className = 'bubble-meta';
+    meta.className = 'wa-meta';
     const ts = document.createElement('span');
-    ts.className = 'time-stamp';
+    ts.className = 'wa-time';
     ts.textContent = getTime();
     meta.appendChild(ts);
-    if (isSent) {
-      const tick = document.createElement('span');
-      tick.className = 'tick';
-      tick.textContent = '✓✓';
-      tick.style.color = '#53bdeb';
-      tick.style.fontSize = '11px';
-      meta.appendChild(tick);
+    if(isSent){
+      const ticks = document.createElement('span');
+      ticks.className = 'wa-ticks';
+      ticks.innerHTML = SVG_TICKS;
+      meta.appendChild(ticks);
     }
-    row.appendChild(meta);
+    bubble.appendChild(meta);
+    row.appendChild(bubble);
   } else {
-    // iMessage: show "Delivered" below last sent message only
-    if (isSent && isLast) {
-      const delivered = document.createElement('div');
-      delivered.className = 'im-delivered';
-      delivered.textContent = 'Delivered';
-      row.appendChild(delivered);
-    }
+    // iMessage — text only, no timestamp, no ticks, no Delivered
+    bubble.textContent = msg.text;
+    row.appendChild(bubble);
   }
-
   return row;
 }
 
-function createTypingEl(sender) {
-  const isA = sender === senderA;
-  const isSent = !isA;
-
-  const row = document.createElement('div');
-  row.className = `msg-row typing-row ${isSent ? 'msg-sent' : 'msg-recv'}`;
-
-  const indicator = document.createElement('div');
-  indicator.className = 'typing-indicator';
-  for (let i = 0; i < 3; i++) {
-    const dot = document.createElement('div');
-    dot.className = 'dot';
-    indicator.appendChild(dot);
+function updateHeader(name){
+  const initial = name ? name.charAt(0).toUpperCase() : '?';
+  // WA: update name text only (avatar is SVG person icon, not initials)
+  const nameWA = document.getElementById('header-name-wa');
+  if(nameWA) nameWA.textContent = name || 'Chat Preview';
+  // iMessage: rebuild with chevron
+  const avatarIM = document.getElementById('header-avatar-im');
+  if(avatarIM) avatarIM.textContent = initial;
+  const nameIM = document.getElementById('header-name-im');
+  if(nameIM){
+    nameIM.innerHTML = '';
+    nameIM.appendChild(document.createTextNode(name || 'Chat Preview'));
+    const chev = document.createElement('span');
+    chev.className = 'im-chevron';
+    chev.textContent = ' ›';
+    nameIM.appendChild(chev);
   }
-  row.appendChild(indicator);
-  return row;
 }
 
-function scrollToBottom() {
-  const msgs = document.getElementById('chat-messages');
-  msgs.scrollTop = msgs.scrollHeight;
+function clearChat(){
+  if(playbackTimeout)clearTimeout(playbackTimeout);
+  const emptyColor=currentTheme==='wa'?'rgba(0,0,0,0.3)':'rgba(255,255,255,0.25)';
+  document.getElementById('chat-messages').innerHTML=
+    `<div id="empty-state" style="text-align:center;color:${emptyColor};font-size:12px;margin-top:80px;line-height:2;font-family:-apple-system,sans-serif">Parse a script and hit<br>▶ Preview to start</div>`;
+  const st=document.getElementById('header-status');if(st)st.textContent='last seen today';
+  cvMessages=[];cvTypingSender=null;
 }
 
-// ==========================================
-// PREVIEW PLAYBACK
-// ==========================================
-async function playPreview() {
-  if (isPlaying) return;
-  if (!parsedMessages.length) {
-    const raw = document.getElementById('script-input').value;
-    if (!raw.trim()) { showToast('⚠️ Paste and parse a script first!'); return; }
-    parseAndPreview();
-    if (!parsedMessages.length) return;
-  }
-
-  resetChat(false);
-  isPlaying = true;
-  playbackAbort = false;
-
-  setStatus('playing', 'Playing...');
-  document.getElementById('play-btn').disabled = true;
-  document.getElementById('render-btn').disabled = true;
-
-  await runPlayback(false);
-
-  isPlaying = false;
-  setStatus('done', 'Preview Complete');
-  document.getElementById('play-btn').disabled = false;
-  document.getElementById('render-btn').disabled = false;
+function createTypingEl(sender){
+  const isSent=sender!==senderA;
+  const row=document.createElement('div');row.className=`msg-row typing-row ${isSent?'msg-sent':'msg-recv'}`;
+  const ind=document.createElement('div');ind.className='typing-indicator';
+  for(let i=0;i<3;i++){const d=document.createElement('div');d.className='dot';ind.appendChild(d)}
+  row.appendChild(ind);return row;
 }
 
-async function runPlayback(recording) {
-  const msgs = document.getElementById('chat-messages');
-  msgs.innerHTML = '';
+// ── Playback ───────────────────────────────────────────────
+async function runPlayback(){
+  const msgsEl = document.getElementById('chat-messages');
+  msgsEl.innerHTML = '';
+  cvMessages = [];
+  cvTypingSender = null;
 
-  // Date divider
-  const divider = document.createElement('div');
-  divider.className = 'date-divider';
-  divider.textContent = 'Today';
-  msgs.appendChild(divider);
+  const div = document.createElement('div');
+  div.className = 'date-divider';
+  div.textContent = 'Today';
+  msgsEl.appendChild(div);
 
   const total = parsedMessages.length;
+  // Track last bubble DOM element per sender for tail management
+  const lastBubbleEl = {};
 
-  for (let i = 0; i < total; i++) {
-    if (playbackAbort) break;
+  for(let i = 0; i < total; i++){
+    if(playbackAbort) break;
 
     const msg = parsedMessages[i];
     const isLast = i === total - 1;
-    const progress = Math.round((i / total) * 100);
-    updateProgress(progress, `Message ${i + 1} of ${total}`);
+    const prevSender = i > 0 ? parsedMessages[i-1].sender : null;
+    const nextSender = i < total-1 ? parsedMessages[i+1].sender : null;
+    const isLastOfRun = (nextSender !== msg.sender); // last in consecutive run = tail needed
 
-    // Show typing indicator
+    updateProgress(Math.round(i/total*100), `Message ${i+1} of ${total}`);
+
+    // Typing indicator
+    cvTypingSender = msg.sender;
     const typingEl = createTypingEl(msg.sender);
-    msgs.appendChild(typingEl);
+    msgsEl.appendChild(typingEl);
     scrollToBottom();
+    const st = document.getElementById('header-status');
+    if(st) st.textContent = `${msg.sender} is typing...`;
 
-    // Update status line
-    const statusEl = document.getElementById('header-status');
-    if (statusEl) statusEl.textContent = `${msg.sender} is typing...`;
+    await sleep(getTypingDuration(msg.text));
+    if(playbackAbort) break;
 
-    const typingDur = getTypingDuration(msg.text);
-    await sleep(typingDur, recording);
+    msgsEl.removeChild(typingEl);
+    cvTypingSender = null;
+    if(st) st.textContent = 'tap here for contact info';
 
-    if (playbackAbort) break;
+    cvMessages.forEach(m => m.isLast = false);
+    if(currentTheme === 'im') msgsEl.querySelectorAll('.im-delivered').forEach(d => d.remove());
 
-    // Remove typing, add bubble
-    msgs.removeChild(typingEl);
-    if (statusEl) statusEl.textContent = 'online';
+    const timeStr = getTime();
+    cvMessages.push({ sender: msg.sender, text: msg.text, time: timeStr, isLast: true });
 
-    // Remove previous "Delivered" label on iMessage before adding new last bubble
-    if (currentTheme === 'im') {
-      const prevDelivered = msgs.querySelectorAll('.im-delivered');
-      prevDelivered.forEach(d => d.remove());
+    // Build bubble row
+    const bubbleRow = createBubbleEl(msg, isLast, prevSender);
+    const bubbleEl = bubbleRow.querySelector('.bubble');
+
+    if(currentTheme === 'wa' && bubbleEl){
+      // Remove tail from previous bubble of same sender (it's no longer last)
+      if(lastBubbleEl[msg.sender]){
+        lastBubbleEl[msg.sender].classList.remove('has-tail');
+      }
+      // Add tail if this is last in run
+      if(isLastOfRun){
+        bubbleEl.classList.add('has-tail');
+      }
+      lastBubbleEl[msg.sender] = bubbleEl;
     }
 
-    const bubble = createBubbleEl(msg, isLast);
-    msgs.appendChild(bubble);
+    msgsEl.appendChild(bubbleRow);
     scrollToBottom();
 
-    if (i < total - 1) {
-      await sleep(getGapDuration(), recording);
-    }
+    if(i < total-1) await sleep(getGapDuration());
   }
 
   updateProgress(100, 'Complete');
 }
 
-function sleep(ms, isRecording) {
-  return new Promise(resolve => {
-    if (isRecording) {
-      // Slower sleep for recording to match canvas frame timing
-      playbackTimeout = setTimeout(resolve, ms);
-    } else {
-      playbackTimeout = setTimeout(resolve, ms);
-    }
-  });
+async function playPreview(){
+  if(isPlaying||isRecording)return;
+  if(!parsedMessages.length){
+    const raw=document.getElementById('script-input').value;
+    if(!raw.trim()){showToast('⚠️ Paste and parse a script first!');return}
+    parseAndPreview();if(!parsedMessages.length)return;
+  }
+  clearChat();
+  isPlaying=true;playbackAbort=false;
+  setStatus('playing','Playing...');
+  document.getElementById('play-btn').disabled=true;
+  document.getElementById('render-btn').disabled=true;
+  document.getElementById('gif-btn').disabled=true;
+  await runPlayback();
+  isPlaying=false;
+  setStatus('done','Preview Complete');
+  document.getElementById('play-btn').disabled=false;
+  document.getElementById('render-btn').disabled=false;
+  document.getElementById('gif-btn').disabled=false;
 }
 
-// ==========================================
-// WEBM + GIF RECORDING ENGINES (see below)
-// ==========================================
+function resetChat(){
+  playbackAbort=true;
+  if(playbackTimeout)clearTimeout(playbackTimeout);
+  clearChat();
+  isPlaying=false;isRecording=false;
+  updateProgress(0,'Waiting...');setStatus('idle','Ready');
+  document.getElementById('play-btn').disabled=false;
+  document.getElementById('render-btn').disabled=false;
+  document.getElementById('gif-btn').disabled=false;
+  document.getElementById('gif-btn').textContent='⬇ Download GIF';
+  document.getElementById('render-btn').textContent='⬇ Download WebM';
+}
 
-// Better recording strategy: use getDisplayMedia or direct captureStream from phone element
-async function renderAndDownloadV2() {
-  if (isRecording || isPlaying) return;
-  if (!parsedMessages.length) {
-    const raw = document.getElementById('script-input').value;
-    if (!raw.trim()) { showToast('⚠️ Paste and parse a script first!'); return; }
-    parseAndPreview();
-    if (!parsedMessages.length) return;
+// ── Canvas Chat Renderer ───────────────────────────────────
+// Renders at 3× DPR internally for sharp/crisp output.
+// Logical size: 390×760. Physical canvas: 1170×2280.
+
+const CV_W=390, CV_H=760;
+const DPR=3; // render at 3× for crisp text & graphics
+const CV_PW=CV_W*DPR, CV_PH=CV_H*DPR; // physical canvas pixels
+
+function wrapText(ctx,text,maxW){
+  const words=text.split(' ');const lines=[];let line='';
+  for(const w of words){const t=line?line+' '+w:w;if(ctx.measureText(t).width>maxW&&line){lines.push(line);line=w}else line=t}
+  if(line)lines.push(line);return lines;
+}
+function roundRect(ctx,x,y,w,h,r){
+  r=Math.min(r,w/2,h/2);
+  ctx.beginPath();
+  ctx.moveTo(x+r,y);ctx.lineTo(x+w-r,y);ctx.quadraticCurveTo(x+w,y,x+w,y+r);
+  ctx.lineTo(x+w,y+h-r);ctx.quadraticCurveTo(x+w,y+h,x+w-r,y+h);
+  ctx.lineTo(x+r,y+h);ctx.quadraticCurveTo(x,y+h,x,y+h-r);
+  ctx.lineTo(x,y+r);ctx.quadraticCurveTo(x,y,x+r,y);ctx.closePath();
+}
+function drawCircle(ctx,x,y,r,color){ctx.fillStyle=color;ctx.beginPath();ctx.arc(x,y,r,0,Math.PI*2);ctx.fill()}
+function drawAvatar(ctx,x,y,r,letter,bg){
+  drawCircle(ctx,x,y,r,bg);
+  ctx.fillStyle='#fff';ctx.font=`bold ${r}px -apple-system,sans-serif`;
+  ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(letter,x,y+1);
+}
+
+function renderFrame(canvas){
+  const ctx=canvas.getContext('2d');
+  // canvas.width/height are physical pixels (CV_PW × CV_PH)
+  // We scale the context so all drawing coordinates stay in logical pixels (CV_W × CV_H)
+  const scale=canvas.width/CV_W; // should equal DPR
+  ctx.setTransform(scale,0,0,scale,0,0);
+  ctx.imageSmoothingEnabled=true;
+  ctx.imageSmoothingQuality='high';
+  const W=CV_W,H=CV_H;
+  const isWA=currentTheme==='wa';
+  const contactName=document.getElementById('contact-name').value.trim()||senderB||'Chat';
+  const avatarLetter=contactName.charAt(0).toUpperCase()||'?';
+
+  // Colours
+  const C=isWA?{
+    bg:'#0b141a',hdr:'#202c33',sentBg:'#005c4b',recvBg:'#202c33',
+    txt:'#e9edef',time:'#8696a0',tick:'#53bdeb',
+    divBg:'transparent',divTxt:'#8696a0',inBg:'#2a3942',inBar:'#202c33',
+    typBg:'#202c33',hdrTxt:'#e9edef',hdrSub:'#8696a0',
+    mic:'#8696a0',av:'#00a884',accent:'#e9edef'
+  }:{
+    bg:'#000',hdr:'#1c1c1e',sentBg:'#0b84fe',recvBg:'#26252a',
+    txt:'#fff',time:'#636366',tick:'#636366',
+    divBg:'transparent',divTxt:'#636366',inBg:'#2c2c2e',inBar:'#1c1c1e',
+    typBg:'#26252a',hdrTxt:'#fff',hdrSub:'#8e8e93',
+    mic:'#3a3a3c',av:'#9b59b6',accent:'#007aff'
+  };
+
+  ctx.clearRect(0,0,W,H);
+  ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
+
+  // Header
+  const HDR=isWA?60:110;
+  ctx.fillStyle=C.hdr;ctx.fillRect(0,0,W,HDR);
+
+  if(isWA){
+    // Back pill: ‹ 8
+    ctx.fillStyle='rgba(255,255,255,0.1)';roundRect(ctx,8,HDR/2-14,44,28,14);ctx.fill();
+    ctx.fillStyle=C.accent;ctx.font='15px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('‹',13,HDR/2+1);
+    ctx.font='500 12px -apple-system,sans-serif';ctx.fillText('8',24,HDR/2+1);
+    // Avatar: profile pic if uploaded, else green circle
+    const avX=72, avY=HDR/2, avR=18;
+    if(profilePicImage && profilePicImage.complete && profilePicImage.naturalWidth>0){
+      ctx.save();
+      ctx.beginPath();ctx.arc(avX,avY,avR,0,Math.PI*2);ctx.clip();
+      ctx.drawImage(profilePicImage,avX-avR,avY-avR,avR*2,avR*2);
+      ctx.restore();
+    } else {
+      drawCircle(ctx,avX,avY,avR,C.av);
+      ctx.fillStyle='#fff';ctx.font='14px -apple-system,sans-serif';
+      ctx.textAlign='center';ctx.fillText('👤',avX,avY+1);
+    }
+    // Name (15px 600) + status (12px #8696a0)
+    ctx.fillStyle=C.hdrTxt;ctx.font='600 15px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.fillText(contactName,98,HDR/2-8);
+    ctx.fillStyle=C.hdrSub;ctx.font='12px -apple-system,sans-serif';
+    ctx.fillText(cvTypingSender?`${cvTypingSender} typing...`:'tap here for contact info',98,HDR/2+9);
+    // Right pill: smaller icons
+    ctx.fillStyle='rgba(255,255,255,0.1)';roundRect(ctx,W-72,HDR/2-14,64,28,14);ctx.fill();
+    ctx.fillStyle=C.accent;ctx.font='13px -apple-system,sans-serif';ctx.textAlign='center';
+    ctx.fillText('📹',W-48,HDR/2+1);ctx.fillText('📞',W-20,HDR/2+1);
+  } else {
+    ctx.fillStyle='#fff';ctx.font='26px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('‹',14,60);
+    drawAvatar(ctx,W/2,50,24,avatarLetter,C.av);
+    ctx.fillStyle=C.hdrTxt;ctx.font='bold 14px -apple-system,sans-serif';
+    ctx.textAlign='center';ctx.fillText(contactName+' ›',W/2,86);
+    drawCircle(ctx,W-28,54,17,'#2c2c2e');
+    ctx.fillStyle='#fff';ctx.font='14px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('📹',W-28,55);
   }
 
-  if (!window.MediaRecorder) {
-    showToast('❌ MediaRecorder not supported. Use Chrome or Firefox.');
-    return;
+  // Input bar
+  const IB=60,IBY=H-IB;
+  ctx.fillStyle=C.inBar;ctx.fillRect(0,IBY,W,IB);
+  if(isWA){
+    // + outline stroke (no fill)
+    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.5;ctx.lineCap='round';ctx.setLineDash([]);
+    ctx.beginPath();ctx.moveTo(16,IBY+22);ctx.lineTo(16,IBY+38);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(8,IBY+30);ctx.lineTo(24,IBY+30);ctx.stroke();
+    // Input pill
+    ctx.fillStyle=C.inBg;roundRect(ctx,30,IBY+12,W-84,36,18);ctx.fill();
+    ctx.fillStyle='#8696a0';ctx.font='15px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('Message',46,IBY+30);
+    // Sticker (outline rounded square + dots)
+    const SX=W-72,SY=IBY+19;
+    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.4;ctx.lineJoin='round';
+    roundRect(ctx,SX,SY,14,14,4);ctx.stroke();
+    ctx.fillStyle='#8696a0';
+    ctx.beginPath();ctx.arc(SX+4,SY+5,1.2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(SX+10,SY+5,1.2,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(SX+3,SY+10);ctx.quadraticCurveTo(SX+7,SY+14,SX+11,SY+10);ctx.stroke();
+    // Camera (outline body + circle lens)
+    const CX=W-50,CY=IBY+18;
+    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.4;ctx.lineJoin='round';ctx.lineCap='round';
+    roundRect(ctx,CX-9,CY,18,13,2.5);ctx.stroke();
+    ctx.beginPath();ctx.arc(CX,CY+6.5,3.5,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(CX-3,CY);ctx.lineTo(CX-5,CY-3);ctx.lineTo(CX+5,CY-3);ctx.lineTo(CX+3,CY);ctx.stroke();
+    // Mic (outline — NO background circle)
+    const MX=W-20,MY=IBY+17;
+    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
+    roundRect(ctx,MX-4,MY,8,10,4);ctx.stroke();
+    ctx.beginPath();ctx.arc(MX,MY+10,6.5,Math.PI,0,false);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(MX,MY+16.5);ctx.lineTo(MX,MY+19);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(MX-4,MY+19);ctx.lineTo(MX+4,MY+19);ctx.stroke();
+  } else {
+    drawCircle(ctx,26,IBY+24,16,'#2c2c2e');
+    ctx.fillStyle='#fff';ctx.font='20px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('+',26,IBY+25);
+    ctx.fillStyle=C.inBg;roundRect(ctx,50,IBY+9,W-66,34,17);ctx.fill();
+    ctx.fillStyle='#636366';ctx.font='14px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText('iMessage',66,IBY+26);
+    ctx.font='16px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText('🎤',W-16,IBY+26);
   }
 
-  isRecording = true;
-  playbackAbort = false;
-  recordedChunks = [];
+  // Chat area clip
+  const CT=HDR+4,CB=IBY-4,CH=CB-CT;
+  ctx.save();ctx.beginPath();ctx.rect(0,CT,W,CH);ctx.clip();
 
-  const renderBtn = document.getElementById('render-btn');
-  const gifBtn = document.getElementById('gif-btn');
-  const playBtn = document.getElementById('play-btn');
+  const FS=isWA?16:15,PX=12,PY=6,GAP=5,TAIL=7,MAX_BW=W*0.78;
+  ctx.font=`${FS}px -apple-system,sans-serif`;
 
-  setStatus('recording', '🔴 Recording...');
-  playBtn.disabled = true;
-  gifBtn.disabled = true;
-  renderBtn.disabled = true;
-  renderBtn.textContent = '⏳ Recording...';
+  // Layout items
+  const items=[];
+  items.push({type:'div',h:24});
+  for(const m of cvMessages){
+    const lines=wrapText(ctx,m.text,MAX_BW-PX*2-36);
+    const bh=lines.length*(FS+4)+PY*2+(isWA?14:0);
+    items.push({type:'msg',m,lines,h:bh+GAP,bh});
+  }
+  if(cvTypingSender)items.push({type:'typing',h:40+GAP});
 
-  const canvas = document.getElementById('record-canvas');
-  const phoneFrame = document.getElementById('phone-frame');
-  const phoneRect = phoneFrame.getBoundingClientRect();
+  // Render bottom-up
+  let y=CB;
+  for(let i=items.length-1;i>=0;i--){
+    const item=items[i];y-=item.h;
+    if(y+item.h<CT)break;
 
-  canvas.width = phoneRect.width;
-  canvas.height = phoneRect.height;
-  const ctx = canvas.getContext('2d');
+    if(item.type==='div'){
+      const label='Today';
+      ctx.font='bold 12px -apple-system,sans-serif';
+      ctx.fillStyle=C.divTxt;
+      ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,W/2,y+12);
 
-  const stream = canvas.captureStream(30);
-  const mimeOptions = ['video/webm;codecs=vp9', 'video/webm;codecs=vp8', 'video/webm'];
-  const mimeType = mimeOptions.find(m => MediaRecorder.isTypeSupported(m)) || 'video/webm';
+    } else if(item.type==='typing'){
+      const bx=12+TAIL,by=y+4,bw=54,bh=32;
+      ctx.fillStyle=C.typBg;roundRect(ctx,bx,by,bw,bh,14);ctx.fill();
+      if(isWA){ctx.beginPath();ctx.moveTo(bx,by+bh-8);ctx.lineTo(bx-TAIL,by+bh);ctx.lineTo(bx+10,by+bh);ctx.closePath();ctx.fill()}
+      else{ctx.beginPath();ctx.moveTo(bx+4,by+bh);ctx.quadraticCurveTo(bx-4,by+bh,bx-TAIL,by+bh+4);ctx.quadraticCurveTo(bx,by+bh-4,bx+4,by+bh-8);ctx.closePath();ctx.fill()}
+      const dotY=by+bh/2,t=(Date.now()/400)%3;
+      for(let d=0;d<3;d++){
+        ctx.fillStyle=isWA?`rgba(233,237,239,${d===Math.floor(t)?1:0.3})`:`rgba(150,150,160,${d===Math.floor(t)?1:0.3})`;
+        ctx.beginPath();ctx.arc(bx+12+d*14,dotY,4,0,Math.PI*2);ctx.fill();
+      }
 
-  mediaRecorder = new MediaRecorder(stream, { mimeType, videoBitsPerSecond: 5000000 });
-  mediaRecorder.ondataavailable = e => { if (e.data.size > 0) recordedChunks.push(e.data); };
-  mediaRecorder.onstop = () => saveRecording(mimeType);
+    } else if(item.type==='msg'){
+      const{m,lines,bh}=item;
+      const isSent=m.sender!==senderA;
+      ctx.font=`${FS}px -apple-system,sans-serif`;
+      const maxLW=Math.max(...lines.map(l=>ctx.measureText(l).width));
+      const timeW=isWA?ctx.measureText(m.time+'  ✓✓').width+10:0;
+      const bw=Math.min(Math.max(maxLW,timeW)+PX*2,MAX_BW);
+      const bx=isSent?W-bw-10-TAIL:10+TAIL;
+      const by=y;
+
+      ctx.fillStyle=isSent?C.sentBg:C.recvBg;
+      if(isWA){
+        // Sent: radius top-right=0 (sharp tail corner), others=12
+        if(isSent){
+          ctx.beginPath();
+          ctx.moveTo(bx+12,by);
+          ctx.lineTo(bx+bw,by); // top-right: sharp (radius 0)
+          ctx.lineTo(bx+bw,by+bh-12);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-12,by+bh);
+          ctx.lineTo(bx+12,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-12);
+          ctx.lineTo(bx,by+12);ctx.quadraticCurveTo(bx,by,bx+12,by);
+          ctx.closePath();ctx.fill();
+          // Tail bottom-right
+          ctx.beginPath();ctx.moveTo(bx+bw,by+bh-8);ctx.lineTo(bx+bw+TAIL,by+bh);ctx.lineTo(bx+bw-6,by+bh);ctx.closePath();ctx.fill();
+        } else {
+          // Recv: radius top-left=0 (sharp), others=12
+          ctx.beginPath();
+          ctx.moveTo(bx,by); // top-left: sharp (radius 0)
+          ctx.lineTo(bx+bw-12,by);ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+12);
+          ctx.lineTo(bx+bw,by+bh-12);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-12,by+bh);
+          ctx.lineTo(bx+12,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-12);
+          ctx.lineTo(bx,by);
+          ctx.closePath();ctx.fill();
+          // Tail bottom-left
+          ctx.beginPath();ctx.moveTo(bx,by+bh-8);ctx.lineTo(bx-TAIL,by+bh);ctx.lineTo(bx+6,by+bh);ctx.closePath();ctx.fill();
+        }
+      } else {
+        roundRect(ctx,bx,by,bw,bh,18);ctx.fill();
+        if(isSent){ctx.beginPath();ctx.moveTo(bx+bw-4,by+bh);ctx.quadraticCurveTo(bx+bw+4,by+bh,bx+bw+TAIL,by+bh+4);ctx.quadraticCurveTo(bx+bw+2,by+bh-4,bx+bw,by+bh-10);ctx.closePath();ctx.fill()}
+        else{ctx.beginPath();ctx.moveTo(bx+4,by+bh);ctx.quadraticCurveTo(bx-4,by+bh,bx-TAIL,by+bh+4);ctx.quadraticCurveTo(bx-2,by+bh-4,bx,by+bh-10);ctx.closePath();ctx.fill()}
+      }
+
+      // Text
+      ctx.fillStyle=C.txt;ctx.font=`${FS}px -apple-system,sans-serif`;
+      ctx.textAlign='left';ctx.textBaseline='top';
+      lines.forEach((line,li)=>ctx.fillText(line,bx+PX,by+PY+li*(FS+4)));
+
+      // WA timestamp + ticks (light text on dark bubble)
+      if(isWA){
+        ctx.fillStyle=C.time;ctx.font='10px -apple-system,sans-serif';
+        ctx.textAlign='right';ctx.textBaseline='bottom';
+        const ty=by+bh-4;
+        ctx.fillText(m.time,bx+bw-(isSent?20:8),ty);
+        if(isSent){
+          // Draw two checkmarks
+          ctx.strokeStyle=C.tick;ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
+          const tx=bx+bw-4,ty2=by+bh-6;
+          ctx.beginPath();ctx.moveTo(tx-13,ty2-2);ctx.lineTo(tx-10,ty2+1);ctx.lineTo(tx-6,ty2-4);ctx.stroke();
+          ctx.beginPath();ctx.moveTo(tx-9,ty2-2);ctx.lineTo(tx-6,ty2+1);ctx.lineTo(tx-2,ty2-4);ctx.stroke();
+        }
+      }
+
+      // iMessage Delivered
+      if(!isWA&&m.isLast&&isSent){
+        ctx.fillStyle='#636366';ctx.font='11px -apple-system,sans-serif';
+        ctx.textAlign='right';ctx.textBaseline='top';
+        ctx.fillText('Delivered',W-10,by+bh+2);
+      }
+    }
+  }
+  ctx.restore();
+}
+
+// ── WebM Export ────────────────────────────────────────────
+async function renderAndDownloadV2(){
+  if(isRecording||isPlaying)return;
+  if(!parsedMessages.length){showToast('⚠️ Parse a script first!');return}
+  if(!window.MediaRecorder){showToast('❌ MediaRecorder not supported. Use Chrome.');return}
+
+  const rb=document.getElementById('render-btn');
+  const gb=document.getElementById('gif-btn');
+  const pb=document.getElementById('play-btn');
+
+  isRecording=true;playbackAbort=false;recordedChunks=[];
+  setStatus('recording','🔴 Recording...');
+  rb.disabled=gb.disabled=pb.disabled=true;
+  rb.textContent='⏳ Recording...';
+
+  const canvas=document.getElementById('record-canvas');
+  canvas.width=CV_PW; canvas.height=CV_PH;
+  console.log('[WebM] canvas',canvas.width,'x',canvas.height,'(logical',CV_W,'x',CV_H,'@ DPR',DPR,')');
+
+  const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
+  console.log('[WebM] mime',mime);
+
+  const stream=canvas.captureStream(30);
+  mediaRecorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8_000_000});
+  mediaRecorder.ondataavailable=e=>{console.log('[WebM] chunk',e.data?.size);if(e.data?.size>0)recordedChunks.push(e.data)};
+  mediaRecorder.onstart=()=>console.log('[WebM] started');
+  mediaRecorder.onstop=()=>{console.log('[WebM] stopped chunks:',recordedChunks.length);saveWebm(mime)};
   mediaRecorder.start(100);
 
-  let frameActive = true;
-  const drawFrame = async () => {
-    if (!frameActive) return;
-    await drawPhoneToCanvas(ctx, phoneFrame, canvas.width, canvas.height);
-    if (frameActive) animationFrameId = requestAnimationFrame(drawFrame);
-  };
+  // Frame loop — pure canvas drawing
+  let frameActive=true;
+  (async()=>{let n=0;while(frameActive){renderFrame(canvas);n++;if(n%30===0)console.log('[WebM] frame',n);await new Promise(r=>setTimeout(r,33))}})();
 
-  resetChat(false);
-  isPlaying = true;
-  drawFrame();
+  clearChat();
+  isPlaying=true;
+  await runPlayback();
+  await new Promise(r=>setTimeout(r,1500));
+  isPlaying=false;frameActive=false;
 
-  await runPlayback(true);
-
-  isPlaying = false;
-  frameActive = false;
-
-  await new Promise(r => setTimeout(r, 600));
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
+  await new Promise(r=>setTimeout(r,400));
+  mediaRecorder.requestData();
+  await new Promise(r=>setTimeout(r,200));
   mediaRecorder.stop();
 
-  isRecording = false;
-  setStatus('done', '✓ Download ready');
-  playBtn.disabled = false;
-  gifBtn.disabled = false;
-  renderBtn.disabled = false;
-  renderBtn.textContent = '⬇ Download WebM';
+  isRecording=false;
+  setStatus('done','✓ Download ready');
+  rb.disabled=gb.disabled=pb.disabled=false;
+  rb.textContent='⬇ Download WebM';
 }
 
-// (render-btn wired in consolidated DOMContentLoaded at bottom of file)
-
-function saveRecording(mimeType) {
-  if (!recordedChunks.length) {
-    showToast('⚠️ No video data recorded. Try again.');
-    return;
-  }
-  const blob = new Blob(recordedChunks, { type: mimeType });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement('a');
-  a.href = url;
-  a.download = `chatdrama-${Date.now()}.webm`;
-  a.click();
-  setTimeout(() => URL.revokeObjectURL(url), 5000);
-  showToast('✓ Video downloaded! Check your downloads folder.');
+function saveWebm(mime){
+  console.log('[WebM] saving chunks:',recordedChunks.length);
+  if(!recordedChunks.length){showToast('⚠️ No video data. Try again.');return}
+  const blob=new Blob(recordedChunks,{type:mime});
+  console.log('[WebM] size',(blob.size/1024).toFixed(1),'KB');
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');a.href=url;a.download=`chatdrama-${Date.now()}.webm`;
+  document.body.appendChild(a);a.click();document.body.removeChild(a);
+  setTimeout(()=>URL.revokeObjectURL(url),8000);
+  showToast('✓ WebM downloaded!');
 }
 
-// ==========================================
-// GIF EXPORT ENGINE
-// ==========================================
-async function renderGif() {
-  if (isRecording || isPlaying) return;
-  if (!parsedMessages.length) {
-    const raw = document.getElementById('script-input').value;
-    if (!raw.trim()) { showToast('⚠️ Paste and parse a script first!'); return; }
-    parseAndPreview();
-    if (!parsedMessages.length) return;
-  }
+// ── GIF Export ─────────────────────────────────────────────
+async function renderGif(){
+  if(isRecording||isPlaying)return;
+  if(!parsedMessages.length){showToast('⚠️ Parse a script first!');return}
 
-  // gif.js loads its worker from CDN — we inline the worker as a blob to avoid CORS
-  const workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/gif.js/0.2.0/gif.worker.js';
+  const gb=document.getElementById('gif-btn');
+  const rb=document.getElementById('render-btn');
+  const pb=document.getElementById('play-btn');
 
-  isRecording = true;
-  playbackAbort = false;
+  isRecording=true;playbackAbort=false;
+  gb.disabled=rb.disabled=pb.disabled=true;
+  gb.textContent='⏳ Capturing...';
+  setStatus('recording','🔴 Capturing...');
 
-  const gifBtn = document.getElementById('gif-btn');
-  const playBtn = document.getElementById('play-btn');
-  const renderBtn = document.getElementById('render-btn');
+  const GW=480, GH=Math.round(CV_H*(GW/CV_W)); // 2× logical width for sharper GIF
+  const fullC=document.createElement('canvas');fullC.width=CV_PW;fullC.height=CV_PH;
+  const capC=document.createElement('canvas');capC.width=GW;capC.height=GH;
+  const capCtx=capC.getContext('2d');
+  // Enable image smoothing for high-quality downscale
+  capCtx.imageSmoothingEnabled=true;
+  capCtx.imageSmoothingQuality='high';
 
-  gifBtn.disabled = true;
-  gifBtn.textContent = '⏳ Rendering GIF...';
-  playBtn.disabled = true;
-  renderBtn.disabled = true;
+  const frames=[];let capturing=true;
 
-  setStatus('recording', '🔴 Building GIF...');
-
-  const canvas = document.getElementById('record-canvas');
-  const phoneFrame = document.getElementById('phone-frame');
-  const phoneRect = phoneFrame.getBoundingClientRect();
-
-  // GIF resolution — cap at 360px wide for reasonable file size
-  const gifW = Math.min(Math.round(phoneRect.width), 360);
-  const gifH = Math.round(phoneRect.height * (gifW / phoneRect.width));
-
-  canvas.width = gifW;
-  canvas.height = gifH;
-  const ctx = canvas.getContext('2d');
-
-  // Initialise gif.js
-  const gif = new GIF({
-    workers: 2,
-    quality: 8,
-    width: gifW,
-    height: gifH,
-    workerScript: workerSrc,
-    repeat: 0  // loop forever
-  });
-
-  // Frame capture array — we collect frames during playback then encode
-  const gifFrames = [];
-  let lastFrameTime = performance.now();
-  let captureActive = true;
-
-  // Frame capture loop — captures at ~12fps to keep file size sane
-  const GIF_FPS = 12;
-  const FRAME_INTERVAL = 1000 / GIF_FPS;
-
-  const captureLoop = async () => {
-    while (captureActive) {
-      const now = performance.now();
-      const elapsed = now - lastFrameTime;
-      if (elapsed >= FRAME_INTERVAL) {
-        lastFrameTime = now;
-        // Draw phone DOM → canvas via SVG foreignObject
-        try {
-          await drawPhoneToCanvas(ctx, phoneFrame, gifW, gifH);
-          // Snapshot this canvas frame
-          const imageData = ctx.getImageData(0, 0, gifW, gifH);
-          gifFrames.push({ imageData, delay: Math.round(elapsed) });
-        } catch(e) { /* skip frame on error */ }
-      }
-      await new Promise(r => setTimeout(r, 10));
+  // Capture loop runs concurrently with playback
+  (async()=>{
+    let n=0;
+    while(capturing){
+      renderFrame(fullC);
+      capCtx.clearRect(0,0,GW,GH);
+      capCtx.drawImage(fullC,0,0,GW,GH);
+      frames.push(capCtx.getImageData(0,0,GW,GH));
+      n++;if(n%10===0)console.log('[GIF] frame',n);
+      await new Promise(r=>setTimeout(r,120));
     }
+    console.log('[GIF] capture done, frames:',n);
+  })();
+
+  clearChat();
+  isPlaying=true;
+  await runPlayback();
+  await new Promise(r=>setTimeout(r,1500));
+  isPlaying=false;capturing=false;
+
+  await new Promise(r=>setTimeout(r,150));
+
+  if(!frames.length){
+    showToast('❌ No frames captured.');
+    isRecording=false;gb.disabled=rb.disabled=pb.disabled=false;gb.textContent='⬇ Download GIF';return;
+  }
+
+  console.log('[GIF] encoding',frames.length,'frames',GW,'x',GH);
+  setStatus('recording','⚙️ Encoding...');
+  gb.textContent='⚙️ Encoding...';
+  updateProgress(90,`Encoding ${frames.length} frames...`);
+  await new Promise(r=>setTimeout(r,30));
+
+  try{
+    const bytes=gifEncode(frames,GW,GH,12);
+    const blob=new Blob([bytes],{type:'image/gif'});
+    console.log('[GIF] done',(blob.size/1024).toFixed(1),'KB');
+    const url=URL.createObjectURL(blob);
+    const a=document.createElement('a');a.href=url;a.download=`chatdrama-${Date.now()}.gif`;
+    document.body.appendChild(a);a.click();document.body.removeChild(a);
+    setTimeout(()=>URL.revokeObjectURL(url),10000);
+    updateProgress(100,'Done!');setStatus('done','✓ GIF Downloaded!');
+    showToast(`✓ GIF saved! ${frames.length} frames · ${(blob.size/1024).toFixed(0)} KB`);
+  }catch(e){
+    console.error('[GIF] encode error:',e);
+    showToast('❌ GIF encode error. Check console.');setStatus('idle','Ready');
+  }
+  isRecording=false;gb.disabled=rb.disabled=pb.disabled=false;gb.textContent='⬇ Download GIF';
+}
+
+// Pure-JS GIF encoder — adaptive palette + Floyd-Steinberg dithering
+function gifEncode(frames,w,h,delay){
+  const out=[];
+  const B=(...b)=>b.forEach(x=>out.push(x&0xFF));
+  const S=s=>{for(let i=0;i<s.length;i++)out.push(s.charCodeAt(i)&0xFF)};
+
+  // Build adaptive palette from first frame using median-cut approximation
+  // For simplicity & speed we use a good fixed 256-color palette covering dark UI colors
+  const pal=buildAdaptivePalette(frames[0]);
+
+  S('GIF89a');B(w&0xFF,w>>8,h&0xFF,h>>8,0xF7,0,0);
+  pal.forEach(([r,g,b])=>B(r,g,b));
+  B(0x21,0xFF,0x0B);S('NETSCAPE2.0');B(3,1,0,0,0);
+
+  for(const f of frames){
+    B(0x21,0xF9,0x04,0x00,delay&0xFF,delay>>8,0,0);
+    B(0x2C,0,0,0,0,w&0xFF,w>>8,h&0xFF,h>>8,0x00);
+    const px=quantizeFS(f,w,h,pal); // Floyd-Steinberg dithering
+    const lzwData=lzwEncode(px,8);B(8);
+    for(let i=0;i<lzwData.length;i+=255){const bl=lzwData.slice(i,i+255);B(bl.length,...bl)}B(0);
+  }
+  B(0x3B);return new Uint8Array(out);
+}
+
+// Build a palette tuned for dark chat UIs: deep darks, greens, blues, whites, grays
+function buildAdaptivePalette(firstFrame){
+  const pal=[];
+  // Dark backgrounds and chat colors
+  const bases=[
+    // Blacks & very darks
+    [0,0,0],[11,16,20],[17,26,32],[24,34,43],[30,44,54],
+    // WhatsApp greens
+    [0,92,55],[0,75,45],[0,168,132],[37,211,102],
+    // iMessage blue
+    [33,150,243],[25,118,210],[13,71,161],
+    // Grays
+    [20,20,20],[28,28,30],[44,44,46],[99,99,102],
+    [142,150,161],[174,186,193],[233,237,239],
+    // Whites
+    [255,255,255],[240,240,245],[200,200,210],
+    // Ticks
+    [83,189,235],[0,100,80],
+    // Avatar colors
+    [217,55,110],[155,89,182],[99,102,241],
+  ];
+  pal.push(...bases);
+  // Fill remaining 256 slots with a dense ramp of dark UI-relevant colors
+  const steps=[0,17,34,51,68,85,102,119,136,153,170,187,204,221,238,255];
+  for(const v of steps){pal.push([v,v,v]);if(pal.length>=256)break}
+  for(let r=0;r<4;r++)for(let g=0;g<4;g++)for(let b=0;b<4;b++){
+    pal.push([r*85,g*85,b*85]);if(pal.length>=256)break;
+  }
+  while(pal.length<256)pal.push([0,0,0]);
+  return pal.slice(0,256);
+}
+
+// Floyd-Steinberg dithering quantizer
+function quantizeFS(imgData,w,h,pal){
+  // Work on a float copy so we can propagate errors
+  const d=imgData.data;
+  const r=new Float32Array(w*h),g=new Float32Array(w*h),b=new Float32Array(w*h);
+  for(let i=0;i<w*h;i++){r[i]=d[i*4];g[i]=d[i*4+1];b[i]=d[i*4+2]}
+
+  const px=new Uint8Array(w*h);
+  const near=(ri,gi,bi)=>{
+    let best=0,bestD=1e9;
+    for(let j=0;j<pal.length;j++){
+      const dr=ri-pal[j][0],dg=gi-pal[j][1],db=bi-pal[j][2];
+      const d=dr*dr+dg*dg+db*db;
+      if(d<bestD){bestD=d;best=j;if(d===0)break}
+    }
+    return best;
   };
+  const clamp=v=>Math.max(0,Math.min(255,v));
 
-  // Reset and start
-  resetChat(false);
-  isPlaying = true;
-  captureLoop(); // runs concurrently
-
-  await runPlayback(true);
-
-  // Hold last frame for 2 seconds
-  await new Promise(r => setTimeout(r, 2000));
-
-  isPlaying = false;
-  captureActive = false;
-
-  // Allow last frames to flush
-  await new Promise(r => setTimeout(r, 200));
-
-  setStatus('recording', '⚙️ Encoding GIF...');
-  gifBtn.textContent = '⚙️ Encoding...';
-  updateProgress(90, 'Encoding GIF...');
-
-  // Add all frames to gif.js
-  for (const frame of gifFrames) {
-    // Create a temp canvas for this frame
-    const tmp = document.createElement('canvas');
-    tmp.width = gifW;
-    tmp.height = gifH;
-    const tctx = tmp.getContext('2d');
-    tctx.putImageData(frame.imageData, 0, 0);
-    gif.addFrame(tmp, { delay: Math.max(frame.delay, 80), copy: true });
+  for(let y=0;y<h;y++){
+    for(let x=0;x<w;x++){
+      const i=y*w+x;
+      const oldR=r[i],oldG=g[i],oldB=b[i];
+      const idx=near(clamp(oldR),clamp(oldG),clamp(oldB));
+      px[i]=idx;
+      const er=oldR-pal[idx][0],eg=oldG-pal[idx][1],eb=oldB-pal[idx][2];
+      // Distribute error (FS coefficients)
+      if(x+1<w){r[i+1]+=er*7/16;g[i+1]+=eg*7/16;b[i+1]+=eb*7/16}
+      if(y+1<h){
+        if(x>0){r[i+w-1]+=er*3/16;g[i+w-1]+=eg*3/16;b[i+w-1]+=eb*3/16}
+        r[i+w]+=er*5/16;g[i+w]+=eg*5/16;b[i+w]+=eb*5/16;
+        if(x+1<w){r[i+w+1]+=er*1/16;g[i+w+1]+=eg*1/16;b[i+w+1]+=eb*1/16}
+      }
+    }
   }
-
-  gif.on('progress', p => {
-    const pct = Math.round(p * 100);
-    updateProgress(90 + Math.round(pct * 0.1), `Encoding: ${pct}%`);
-  });
-
-  gif.on('finished', blob => {
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `chatdrama-${Date.now()}.gif`;
-    a.click();
-    setTimeout(() => URL.revokeObjectURL(url), 10000);
-
-    isRecording = false;
-    setStatus('done', '✓ GIF Downloaded!');
-    updateProgress(100, 'Done!');
-    gifBtn.disabled = false;
-    gifBtn.textContent = '⬇ Download GIF';
-    playBtn.disabled = false;
-    renderBtn.disabled = false;
-    showToast(`✓ GIF saved! (${gifFrames.length} frames)`);
-  });
-
-  gif.on('error', err => {
-    console.error('GIF error:', err);
-    isRecording = false;
-    setStatus('idle', 'Ready');
-    gifBtn.disabled = false;
-    gifBtn.textContent = '⬇ Download GIF';
-    playBtn.disabled = false;
-    renderBtn.disabled = false;
-    showToast('❌ GIF encoding failed. Try Fast speed or shorter script.');
-  });
-
-  gif.render();
+  return px;
 }
 
-// Shared helper: draw phone DOM to any canvas via SVG foreignObject
-function drawPhoneToCanvas(ctx, phoneFrame, w, h) {
-  return new Promise((resolve) => {
-    try {
-      const svgStr = `<svg xmlns="http://www.w3.org/2000/svg" width="${w}" height="${h}">
-        <foreignObject x="0" y="0" width="${w}" height="${h}">
-          <div xmlns="http://www.w3.org/1999/xhtml"
-               style="width:${w}px;height:${h}px;overflow:hidden;transform-origin:top left;transform:scale(${w/phoneFrame.offsetWidth})">
-            ${phoneFrame.innerHTML}
-          </div>
-        </foreignObject>
-      </svg>`;
-      const blob = new Blob([svgStr], { type: 'image/svg+xml;charset=utf-8' });
-      const url = URL.createObjectURL(blob);
-      const img = new Image();
-      img.onload = () => {
-        ctx.clearRect(0, 0, w, h);
-        ctx.drawImage(img, 0, 0, w, h);
-        URL.revokeObjectURL(url);
-        resolve();
-      };
-      img.onerror = () => { URL.revokeObjectURL(url); resolve(); };
-      img.src = url;
-    } catch(e) { resolve(); }
-  });
+// Old quantize kept as fallback (not used)
+function quantize(data,pal){
+  const px=new Uint8Array(data.length/4);
+  for(let i=0;i<px.length;i++){
+    const r=data[i*4],g=data[i*4+1],b=data[i*4+2];
+    let best=0,bestD=1e9;
+    for(let j=0;j<pal.length;j++){
+      const d=(r-pal[j][0])**2+(g-pal[j][1])**2+(b-pal[j][2])**2;
+      if(d<bestD){bestD=d;best=j;if(d===0)break}
+    }
+    px[i]=best;
+  }return px;
 }
-
-// ==========================================
-// CONTROLS
-// ==========================================
-function resetChat(keepStatus = true) {
-  playbackAbort = true;
-  if (playbackTimeout) clearTimeout(playbackTimeout);
-  if (animationFrameId) cancelAnimationFrame(animationFrameId);
-
-  document.getElementById('chat-messages').innerHTML = `
-    <div id="empty-state" style="text-align:center;color:rgba(255,255,255,0.25);font-size:12px;margin-top:80px;line-height:2;font-family:-apple-system,sans-serif">
-      Parse a script and hit<br>▶ Preview to start
-    </div>`;
-  const statusEl = document.getElementById('header-status');
-  if (statusEl) statusEl.textContent = 'online';
-
-  if (!keepStatus) {
-    updateProgress(0, 'Waiting...');
-    setStatus('idle', 'Ready');
-  } else {
-    setStatus('idle', 'Ready');
-    updateProgress(0, 'Waiting...');
+function lzwEncode(px,minCS){
+  const cc=1<<minCS,eof=cc+1;
+  let cs=minCS+1,nc=eof+1;
+  const maxC=()=>1<<cs;
+  let tbl=new Map();
+  const reset=()=>{tbl.clear();for(let i=0;i<cc;i++)tbl.set(''+i,i);nc=eof+1;cs=minCS+1};
+  const out=[];let buf=0,bits=0;
+  const emit=c=>{buf|=c<<bits;bits+=cs;while(bits>=8){out.push(buf&0xFF);buf>>=8;bits-=8}};
+  reset();emit(cc);
+  let idx=''+px[0];
+  for(let i=1;i<px.length;i++){
+    const k=px[i],ik=idx+','+k;
+    if(tbl.has(ik)){idx=ik}
+    else{
+      emit(tbl.get(idx));
+      if(nc<4096){tbl.set(ik,nc++);if(nc>maxC()&&cs<12)cs++}
+      else{emit(cc);reset()}
+      idx=''+k;
+    }
   }
-
-  isPlaying = false;
-  isRecording = false;
-  document.getElementById('play-btn').disabled = false;
-  document.getElementById('render-btn').disabled = false;
-  document.getElementById('render-btn').textContent = '⬇ Render & Download';
+  emit(tbl.get(idx));emit(eof);if(bits>0)out.push(buf&0xFF);return out;
 }
 
-function setTheme(theme, btn) {
-  currentTheme = theme;
-  const frame = document.getElementById('phone-frame');
-  frame.className = frame.className.replace(/theme-\w+/g, '');
-  frame.classList.add(`theme-${theme}`);
+// ── Profile Picture ────────────────────────────────────────
+let profilePicDataURL = null;
+let profilePicImage = null; // preloaded Image object for canvas
 
-  // Toggle header visibility
-  document.getElementById('wa-header').style.display = theme === 'wa' ? 'flex' : 'none';
-  document.getElementById('im-header').style.display = theme === 'im' ? 'flex' : 'none';
-
-  // Toggle input bar visibility
-  document.getElementById('wa-input-bar').style.display = theme === 'wa' ? 'flex' : 'none';
-  document.getElementById('im-input-bar').style.display = theme === 'im' ? 'flex' : 'none';
-
-  document.querySelectorAll('.theme-btn').forEach(b => b.classList.remove('active'));
-  btn.classList.add('active');
+function handleProfilePic(input){
+  const file = input.files[0];
+  if(!file) return;
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    profilePicDataURL = e.target.result;
+    // Update settings preview thumbnail
+    const preview = document.getElementById('pp-preview');
+    if(preview) preview.innerHTML = `<img src="${profilePicDataURL}" alt="pp">`;
+    // Update WA header avatar
+    const wrap = document.getElementById('wa-avatar-wrap');
+    if(wrap) wrap.innerHTML = `<img src="${profilePicDataURL}" style="width:100%;height:100%;object-fit:cover;border-radius:50%">`;
+    // Preload Image for canvas rendering
+    profilePicImage = new Image();
+    profilePicImage.src = profilePicDataURL;
+    showToast('✓ Profile picture uploaded!');
+  };
+  reader.readAsDataURL(file);
 }
 
-function setSpeed(speed, el) {
-  currentSpeed = speed;
-  document.querySelectorAll('.speed-btn').forEach(b => b.classList.remove('active'));
-  el.classList.add('active');
-}
-
-function setStatus(type, text) {
-  const badge = document.getElementById('status-badge');
-  const span = document.getElementById('status-text');
-  badge.className = `status-badge status-${type}`;
-  span.textContent = text;
-}
-
-function updateProgress(pct, label) {
-  document.getElementById('progress-fill').style.width = pct + '%';
-  document.getElementById('progress-pct').textContent = pct + '%';
-  document.getElementById('progress-label-text').textContent = label;
-}
-
-// ==========================================
-// DEMO SCRIPT
-// ==========================================
-function loadDemo() {
-  const demo = `Rania: hei dito, kamu masih inget kan kamu pinjem 500rb dari aku bulan lalu?
+// ── Demo + Init ────────────────────────────────────────────
+function loadDemo(){
+  document.getElementById('script-input').value=
+`Rania: hei dito, kamu masih inget kan kamu pinjem 500rb dari aku bulan lalu?
 Dito: hah? kapan itu?
 Rania: pas kita nonton bareng, kamu bilang mau balik minggu depannya
 Dito: aku ga inget deh ran
@@ -2466,81 +2051,37 @@ Dito: iya nanti aku transfer
 Rania: "nanti" yang kayak mana dito
 Dito: besok pagi, janji
 Rania: aku screenshot percakapan ini juga ya`;
-
-  document.getElementById('script-input').value = demo;
-  parseAndPreview();
-  showToast('✨ Demo script loaded!');
+  parseAndPreview();showToast('✨ Demo loaded!');
 }
 
-// ==========================================
-// TOAST
-// ==========================================
-let toastTimer;
-function showToast(msg) {
-  const toast = document.getElementById('toast');
-  toast.textContent = msg;
-  toast.classList.add('show');
-  clearTimeout(toastTimer);
-  toastTimer = setTimeout(() => toast.classList.remove('show'), 2800);
-}
-
-// ==========================================
-// INIT — single consolidated DOMContentLoaded
-// ==========================================
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded',()=>{
   updateHeader('Chat Preview');
+  renderPhase1UI();
+  document.getElementById('render-btn').addEventListener('click',renderAndDownloadV2);
+  document.getElementById('contact-name').addEventListener('input',function(){updateHeader(this.value.trim()||senderB||'Chat Preview')});
 
-  // Wire WebM render button
-  document.getElementById('render-btn').addEventListener('click', renderAndDownloadV2);
+  // Fix textarea on mobile
+  const ta=document.getElementById('script-input');
+  ta.addEventListener('touchend',e=>{e.stopPropagation();setTimeout(()=>ta.focus(),50)},{passive:true});
 
-  // Contact name live sync
-  document.getElementById('contact-name').addEventListener('input', function() {
-    updateHeader(this.value.trim() || senderB || 'Chat Preview');
-  });
-
-  // Fix textarea interactivity — ensure it's always focusable and pasteable
-  const ta = document.getElementById('script-input');
-  ta.style.pointerEvents = 'auto';
-  ta.style.userSelect = 'text';
-  ta.style.webkitUserSelect = 'text';
-  ta.style.position = 'relative';
-  ta.style.zIndex = '10';
-
-  // Ensure focus on tap (mobile Safari fix)
-  ta.addEventListener('touchend', (e) => {
-    e.stopPropagation();
-    setTimeout(() => ta.focus(), 50);
-  }, { passive: true });
-
-  // Auto-detect device and highlight recommended export
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const gifCard = document.getElementById('export-gif-card');
-  const webmCard = document.getElementById('export-webm-card');
-  const noteTitle = document.getElementById('note-title');
-  const noteBody = document.getElementById('note-body');
-
-  if (isMobile) {
-    gifCard.style.borderColor = 'var(--accent)';
-    gifCard.style.background = 'rgba(124,92,252,0.08)';
-    noteTitle.textContent = '📱 Kamu pakai HP:';
-    noteBody.textContent = 'Gunakan GIF — langsung tersimpan ke Files/Gallery. WebM tidak support di Safari iOS.';
+  // Auto-detect device
+  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const gc=document.getElementById('export-gif-card');
+  const wc=document.getElementById('export-webm-card');
+  const nt=document.getElementById('note-title');
+  const nb=document.getElementById('note-body');
+  if(isMobile){
+    gc.style.borderColor='var(--accent)';gc.style.background='rgba(124,92,252,0.08)';
+    nt.textContent='📱 Kamu pakai HP:';nb.textContent='Gunakan GIF — langsung tersimpan. WebM tidak support di Safari iOS.';
   } else {
-    webmCard.style.borderColor = '#3b82f6';
-    webmCard.style.background = 'rgba(59,130,246,0.08)';
-    noteTitle.textContent = '💻 Kamu pakai Desktop:';
-    noteBody.textContent = 'WebM kualitas terbaik, langsung ke folder Downloads. GIF tetap bisa dipakai untuk social media.';
+    wc.style.borderColor='#3b82f6';wc.style.background='rgba(59,130,246,0.08)';
+    nt.textContent='💻 Kamu pakai Desktop:';nb.textContent='WebM kualitas terbaik, langsung ke Downloads. GIF tetap bisa untuk social media.';
   }
-
-  // Check if MediaRecorder supported, disable WebM button if not
-  if (!window.MediaRecorder || !HTMLCanvasElement.prototype.captureStream) {
-    const renderBtn = document.getElementById('render-btn');
-    renderBtn.disabled = true;
-    renderBtn.title = 'MediaRecorder tidak didukung browser ini';
-    renderBtn.style.opacity = '0.4';
-    renderBtn.textContent = '✗ Tidak didukung';
-    webmCard.style.opacity = '0.5';
-    noteTitle.textContent = '⚠️ Browser tidak support WebM:';
-    noteBody.textContent = 'Gunakan GIF saja. Untuk WebM gunakan Chrome di laptop.';
+  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
+    const rb=document.getElementById('render-btn');
+    rb.disabled=true;rb.style.opacity='0.4';rb.textContent='✗ Tidak didukung';
+    wc.style.opacity='0.5';
+    nt.textContent='⚠️ Browser tidak support WebM:';nb.textContent='Gunakan GIF. Untuk WebM gunakan Chrome di laptop.';
   }
 });
 </script>
