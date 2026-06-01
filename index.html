@@ -786,7 +786,7 @@ justify-content:center; overflow:hidden; flex-shrink:0;
 
     <div class="card">
       <div class="card-title">🎬 Render Controls</div>
-      <div class="card-desc">Preview dulu, lalu pilih format export.</div>
+      <div class="card-desc">Preview animasi dulu, lalu export GIF untuk dibuka di CapCut.</div>
       <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div id="status-badge" class="status-badge status-idle"><div class="pulse"></div><span id="status-text">Ready</span></div>
         <button class="btn btn-ghost" onclick="resetChat()" style="font-size:12px;padding:7px 14px">↺ Reset</button>
@@ -795,25 +795,30 @@ justify-content:center; overflow:hidden; flex-shrink:0;
         <div class="progress-label"><span id="progress-label-text">Waiting...</span><span id="progress-pct">0%</span></div>
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
-      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:12px;padding:13px">▶ Preview Animation</button>
-      <div class="section-label">Export Format</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px">
-        <div class="export-card" id="export-gif-card">
-          <div class="export-icon">📱</div>
-          <div class="export-label">GIF</div>
-          <div class="export-desc">Works on all devices<br>iOS · Android · Web</div>
-          <button class="btn btn-success" id="gif-btn" onclick="renderGif()" style="width:100%;justify-content:center;margin-top:10px;font-size:12px">⬇ Download GIF</button>
+
+      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:10px;padding:13px">
+        ▶ Preview Animation
+      </button>
+
+      <button class="btn btn-success" id="gif-btn" onclick="renderGif()" style="width:100%;justify-content:center;padding:13px;font-size:14px">
+        ⬇ Download GIF (720px)
+      </button>
+
+      <!-- Workflow guide -->
+      <div style="margin-top:14px;background:var(--surface2);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
+        <div style="font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Workflow ke TikTok</div>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</span>
+          <span style="font-size:12px;color:var(--text-muted)">Download GIF dari sini</span>
         </div>
-        <div class="export-card" id="export-webm-card">
-          <div class="export-icon">💻</div>
-          <div class="export-label">WebM</div>
-          <div class="export-desc">Best quality<br>Desktop Chrome/Firefox</div>
-          <button class="btn" id="render-btn" style="width:100%;justify-content:center;margin-top:10px;font-size:12px;background:linear-gradient(135deg,#2563eb,#3b82f6);color:white;box-shadow:0 4px 14px rgba(59,130,246,0.3)">⬇ Download WebM</button>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</span>
+          <span style="font-size:12px;color:var(--text-muted)">Buka <strong style="color:var(--text)">CapCut</strong> → New Project → Import GIF</span>
         </div>
-      </div>
-      <div style="padding:10px 12px;background:var(--surface2);border-radius:10px;font-size:11px;color:var(--text-muted);line-height:1.7">
-        <strong style="color:var(--accent2)" id="note-title">💡 Tips:</strong>
-        <span id="note-body">GIF cocok untuk HP & story. WebM kualitas lebih tinggi untuk edit di laptop.</span>
+        <div style="display:flex;gap:10px;align-items:center">
+          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</span>
+          <span style="font-size:12px;color:var(--text-muted)">Export MP4 → Upload ke TikTok 🎉</span>
+        </div>
       </div>
     </div>
   </div>
@@ -944,7 +949,7 @@ let senderA = '', senderB = '';
 let isPlaying = false, isRecording = false;
 let playbackAbort = false;
 let playbackTimeout = null;
-let mediaRecorder = null, recordedChunks = [];
+let mediaRecorder = null;
 
 // Canvas state (updated during playback, read by export engines)
 let cvMessages = [];       // [{sender,text,time,isLast}]
@@ -1461,13 +1466,13 @@ async function playPreview(){
   isPlaying=true;playbackAbort=false;
   setStatus('playing','Playing...');
   document.getElementById('play-btn').disabled=true;
-  document.getElementById('render-btn').disabled=true;
+  
   document.getElementById('gif-btn').disabled=true;
   await runPlayback();
   isPlaying=false;
   setStatus('done','Preview Complete');
   document.getElementById('play-btn').disabled=false;
-  document.getElementById('render-btn').disabled=false;
+  
   document.getElementById('gif-btn').disabled=false;
 }
 
@@ -1478,10 +1483,10 @@ function resetChat(){
   isPlaying=false;isRecording=false;
   updateProgress(0,'Waiting...');setStatus('idle','Ready');
   document.getElementById('play-btn').disabled=false;
-  document.getElementById('render-btn').disabled=false;
+  
   document.getElementById('gif-btn').disabled=false;
   document.getElementById('gif-btn').textContent='⬇ Download GIF';
-  document.getElementById('render-btn').textContent='⬇ Download WebM';
+  
 }
 
 // ── Canvas Chat Renderer ───────────────────────────────────
@@ -1737,93 +1742,34 @@ function renderFrame(canvas){
   ctx.restore();
 }
 
-// ── WebM Export ────────────────────────────────────────────
-async function renderAndDownloadV2(){
-  if(isRecording||isPlaying)return;
-  if(!parsedMessages.length){showToast('⚠️ Parse a script first!');return}
-  if(!window.MediaRecorder){showToast('❌ MediaRecorder not supported. Use Chrome.');return}
-
-  const rb=document.getElementById('render-btn');
-  const gb=document.getElementById('gif-btn');
-  const pb=document.getElementById('play-btn');
-
-  isRecording=true;playbackAbort=false;recordedChunks=[];
-  setStatus('recording','🔴 Recording...');
-  rb.disabled=gb.disabled=pb.disabled=true;
-  rb.textContent='⏳ Recording...';
-
-  const canvas=document.getElementById('record-canvas');
-  canvas.width=CV_PW; canvas.height=CV_PH;
-  console.log('[WebM] canvas',canvas.width,'x',canvas.height,'(logical',CV_W,'x',CV_H,'@ DPR',DPR,')');
-
-  const mime=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'].find(m=>MediaRecorder.isTypeSupported(m))||'video/webm';
-  console.log('[WebM] mime',mime);
-
-  const stream=canvas.captureStream(30);
-  mediaRecorder=new MediaRecorder(stream,{mimeType:mime,videoBitsPerSecond:8_000_000});
-  mediaRecorder.ondataavailable=e=>{console.log('[WebM] chunk',e.data?.size);if(e.data?.size>0)recordedChunks.push(e.data)};
-  mediaRecorder.onstart=()=>console.log('[WebM] started');
-  mediaRecorder.onstop=()=>{console.log('[WebM] stopped chunks:',recordedChunks.length);saveWebm(mime)};
-  mediaRecorder.start(100);
-
-  // Frame loop — pure canvas drawing
-  let frameActive=true;
-  (async()=>{let n=0;while(frameActive){renderFrame(canvas);n++;if(n%30===0)console.log('[WebM] frame',n);await new Promise(r=>setTimeout(r,33))}})();
-
-  clearChat();
-  isPlaying=true;
-  await runPlayback();
-  await new Promise(r=>setTimeout(r,1500));
-  isPlaying=false;frameActive=false;
-
-  await new Promise(r=>setTimeout(r,400));
-  mediaRecorder.requestData();
-  await new Promise(r=>setTimeout(r,200));
-  mediaRecorder.stop();
-
-  isRecording=false;
-  setStatus('done','✓ Download ready');
-  rb.disabled=gb.disabled=pb.disabled=false;
-  rb.textContent='⬇ Download WebM';
-}
-
-function saveWebm(mime){
-  console.log('[WebM] saving chunks:',recordedChunks.length);
-  if(!recordedChunks.length){showToast('⚠️ No video data. Try again.');return}
-  const blob=new Blob(recordedChunks,{type:mime});
-  console.log('[WebM] size',(blob.size/1024).toFixed(1),'KB');
-  const url=URL.createObjectURL(blob);
-  const a=document.createElement('a');a.href=url;a.download=`chatdrama-${Date.now()}.webm`;
-  document.body.appendChild(a);a.click();document.body.removeChild(a);
-  setTimeout(()=>URL.revokeObjectURL(url),8000);
-  showToast('✓ WebM downloaded!');
-}
-
-// ── GIF Export ─────────────────────────────────────────────
+// ── GIF Export (720px, 12fps) ──────────────────────────────
 async function renderGif(){
   if(isRecording||isPlaying)return;
-  if(!parsedMessages.length){showToast('⚠️ Parse a script first!');return}
+  if(!parsedMessages.length){
+    const raw=document.getElementById('script-input').value;
+    if(!raw.trim()){showToast('⚠️ Paste dan parse script dulu!');return}
+    parseAndPreview();if(!parsedMessages.length)return;
+  }
 
   const gb=document.getElementById('gif-btn');
-  const rb=document.getElementById('render-btn');
   const pb=document.getElementById('play-btn');
 
   isRecording=true;playbackAbort=false;
-  gb.disabled=rb.disabled=pb.disabled=true;
+  gb.disabled=pb.disabled=true;
   gb.textContent='⏳ Capturing...';
   setStatus('recording','🔴 Capturing...');
 
-  const GW=480, GH=Math.round(CV_H*(GW/CV_W)); // 2× logical width for sharper GIF
+  // 720px wide — crisp enough for CapCut → TikTok
+  const GW=720, GH=Math.round(CV_H*(GW/CV_W));
   const fullC=document.createElement('canvas');fullC.width=CV_PW;fullC.height=CV_PH;
   const capC=document.createElement('canvas');capC.width=GW;capC.height=GH;
   const capCtx=capC.getContext('2d');
-  // Enable image smoothing for high-quality downscale
   capCtx.imageSmoothingEnabled=true;
   capCtx.imageSmoothingQuality='high';
 
   const frames=[];let capturing=true;
 
-  // Capture loop runs concurrently with playback
+  // 12fps capture loop (~83ms interval)
   (async()=>{
     let n=0;
     while(capturing){
@@ -1831,46 +1777,51 @@ async function renderGif(){
       capCtx.clearRect(0,0,GW,GH);
       capCtx.drawImage(fullC,0,0,GW,GH);
       frames.push(capCtx.getImageData(0,0,GW,GH));
-      n++;if(n%10===0)console.log('[GIF] frame',n);
-      await new Promise(r=>setTimeout(r,120));
+      n++;if(n%15===0)console.log('[GIF] frame',n);
+      await new Promise(r=>setTimeout(r,83));
     }
-    console.log('[GIF] capture done, frames:',n);
+    console.log('[GIF] capture done:',n,'frames @',GW,'x',GH);
   })();
 
-  clearChat();
-  isPlaying=true;
+  clearChat();isPlaying=true;
   await runPlayback();
   await new Promise(r=>setTimeout(r,1500));
   isPlaying=false;capturing=false;
-
   await new Promise(r=>setTimeout(r,150));
 
   if(!frames.length){
-    showToast('❌ No frames captured.');
-    isRecording=false;gb.disabled=rb.disabled=pb.disabled=false;gb.textContent='⬇ Download GIF';return;
+    showToast('❌ Tidak ada frame. Coba lagi.');
+    isRecording=false;gb.disabled=pb.disabled=false;
+    gb.textContent='⬇ Download GIF (720px)';return;
   }
 
-  console.log('[GIF] encoding',frames.length,'frames',GW,'x',GH);
-  setStatus('recording','⚙️ Encoding...');
-  gb.textContent='⚙️ Encoding...';
-  updateProgress(90,`Encoding ${frames.length} frames...`);
+  console.log('[GIF] encoding',frames.length,'frames');
+  setStatus('recording','⚙️ Encoding GIF...');
+  gb.textContent=`⚙️ Encoding ${frames.length} frames...`;
+  updateProgress(88,`Encoding ${frames.length} frames...`);
   await new Promise(r=>setTimeout(r,30));
 
   try{
-    const bytes=gifEncode(frames,GW,GH,12);
+    const bytes=gifEncode(frames,GW,GH,8); // 8/100s = 12.5fps playback
     const blob=new Blob([bytes],{type:'image/gif'});
-    console.log('[GIF] done',(blob.size/1024).toFixed(1),'KB');
+    const sizeMB=(blob.size/1024/1024).toFixed(1);
+    console.log('[GIF] done',sizeMB,'MB');
     const url=URL.createObjectURL(blob);
-    const a=document.createElement('a');a.href=url;a.download=`chatdrama-${Date.now()}.gif`;
+    const a=document.createElement('a');
+    a.href=url;a.download=`chatdrama-${Date.now()}.gif`;
     document.body.appendChild(a);a.click();document.body.removeChild(a);
     setTimeout(()=>URL.revokeObjectURL(url),10000);
-    updateProgress(100,'Done!');setStatus('done','✓ GIF Downloaded!');
-    showToast(`✓ GIF saved! ${frames.length} frames · ${(blob.size/1024).toFixed(0)} KB`);
+    updateProgress(100,'Done!');
+    setStatus('done','✓ GIF Downloaded!');
+    showToast(`✓ GIF ${sizeMB}MB siap! Buka di CapCut → export MP4 🎉`);
   }catch(e){
-    console.error('[GIF] encode error:',e);
-    showToast('❌ GIF encode error. Check console.');setStatus('idle','Ready');
+    console.error('[GIF] error:',e);
+    showToast('❌ GIF gagal. Coba speed Fast untuk script panjang.');
+    setStatus('idle','Ready');
   }
-  isRecording=false;gb.disabled=rb.disabled=pb.disabled=false;gb.textContent='⬇ Download GIF';
+
+  isRecording=false;gb.disabled=pb.disabled=false;
+  gb.textContent='⬇ Download GIF (720px)';
 }
 
 // Pure-JS GIF encoder — adaptive palette + Floyd-Steinberg dithering
@@ -2055,32 +2006,11 @@ Rania: aku screenshot percakapan ini juga ya`;
 document.addEventListener('DOMContentLoaded',()=>{
   updateHeader('Chat Preview');
   renderPhase1UI();
-  document.getElementById('render-btn').addEventListener('click',renderAndDownloadV2);
   document.getElementById('contact-name').addEventListener('input',function(){updateHeader(this.value.trim()||senderB||'Chat Preview')});
 
   // Fix textarea on mobile
   const ta=document.getElementById('script-input');
   ta.addEventListener('touchend',e=>{e.stopPropagation();setTimeout(()=>ta.focus(),50)},{passive:true});
-
-  // Auto-detect device
-  const isMobile=/iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const gc=document.getElementById('export-gif-card');
-  const wc=document.getElementById('export-webm-card');
-  const nt=document.getElementById('note-title');
-  const nb=document.getElementById('note-body');
-  if(isMobile){
-    gc.style.borderColor='var(--accent)';gc.style.background='rgba(124,92,252,0.08)';
-    nt.textContent='📱 Kamu pakai HP:';nb.textContent='Gunakan GIF — langsung tersimpan. WebM tidak support di Safari iOS.';
-  } else {
-    wc.style.borderColor='#3b82f6';wc.style.background='rgba(59,130,246,0.08)';
-    nt.textContent='💻 Kamu pakai Desktop:';nb.textContent='WebM kualitas terbaik, langsung ke Downloads. GIF tetap bisa untuk social media.';
-  }
-  if(!window.MediaRecorder||!HTMLCanvasElement.prototype.captureStream){
-    const rb=document.getElementById('render-btn');
-    rb.disabled=true;rb.style.opacity='0.4';rb.textContent='✗ Tidak didukung';
-    wc.style.opacity='0.5';
-    nt.textContent='⚠️ Browser tidak support WebM:';nb.textContent='Gunakan GIF. Untuk WebM gunakan Chrome di laptop.';
-  }
 });
 </script>
 
