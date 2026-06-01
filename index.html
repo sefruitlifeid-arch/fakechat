@@ -1,3 +1,5 @@
+<!DOCTYPE html>
+
 <html lang="en">
 <head>
 <meta charset="UTF-8">
@@ -787,6 +789,13 @@ justify-content:center; overflow:hidden; flex-shrink:0;
     <div class="card">
       <div class="card-title">🎬 Render Controls</div>
       <div class="card-desc">Preview animasi dulu, lalu export GIF untuk dibuka di CapCut.</div>
+
+      <!-- Device warning bar — shown by JS if needed -->
+      <div id="device-warning" style="display:none;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#fbbf24;line-height:1.6">
+        <strong>⚠️ RAM HP terbatas</strong><br>
+        Disarankan pakai <strong>Short</strong> saja di HP ini. Untuk Medium/Long, buka di <strong>laptop/desktop</strong> agar tidak crash.
+      </div>
+
       <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
         <div id="status-badge" class="status-badge status-idle"><div class="pulse"></div><span id="status-text">Ready</span></div>
         <button class="btn btn-ghost" onclick="resetChat()" style="font-size:12px;padding:7px 14px">↺ Reset</button>
@@ -800,8 +809,8 @@ justify-content:center; overflow:hidden; flex-shrink:0;
         ▶ Preview Animation
       </button>
 
-      <button class="btn btn-success" id="gif-btn" onclick="renderGif()" style="width:100%;justify-content:center;padding:13px;font-size:14px">
-        ⬇ Download GIF (720px)
+      <button class="btn btn-success" id="gif-btn" onclick="handleGifDownload()" style="width:100%;justify-content:center;padding:13px;font-size:14px">
+        ⬇ Download GIF (480px)
       </button>
 
       <!-- Workflow guide -->
@@ -818,6 +827,22 @@ justify-content:center; overflow:hidden; flex-shrink:0;
         <div style="display:flex;gap:10px;align-items:center">
           <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</span>
           <span style="font-size:12px;color:var(--text-muted)">Export MP4 → Upload ke TikTok 🎉</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Confirmation Modal -->
+    <div id="gif-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:24px">
+      <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;max-width:320px;width:100%">
+        <div style="font-size:18px;margin-bottom:8px">⚠️ Perhatian</div>
+        <div style="font-size:14px;color:var(--text-dim);line-height:1.6;margin-bottom:20px">
+          Script <strong style="color:var(--text)" id="modal-length-label">Medium/Long</strong> cukup berat untuk diproses di HP.<br><br>
+          Disarankan buka di <strong style="color:var(--accent2)">laptop/desktop</strong> untuk hasil terbaik.<br><br>
+          Tetap lanjut di HP?
+        </div>
+        <div style="display:flex;gap:10px">
+          <button onclick="closeGifModal()" class="btn btn-ghost" style="flex:1;justify-content:center">Batal</button>
+          <button onclick="confirmGif()" class="btn btn-success" style="flex:1;justify-content:center">Lanjut</button>
         </div>
       </div>
     </div>
@@ -1742,7 +1767,37 @@ function renderFrame(canvas){
   ctx.restore();
 }
 
-// ── GIF Export (720px, 12fps) ──────────────────────────────
+// ── GIF Download Handler — device check + modal ────────────
+function handleGifDownload(){
+  if(isRecording||isPlaying)return;
+
+  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
+  const ram = navigator.deviceMemory || 4; // default 4 if API not supported
+  const isLowRamMobile = isMobile && ram < 4;
+  const isHeavyScript = selectedLength === 'medium' || selectedLength === 'long';
+
+  // Show modal if: mobile + (low RAM OR medium/long script)
+  if(isMobile && isHeavyScript){
+    const label = selectedLength === 'medium' ? 'Medium (13–18 pesan)' : 'Long (19–25 pesan)';
+    document.getElementById('modal-length-label').textContent = label;
+    document.getElementById('gif-modal').style.display = 'flex';
+    return;
+  }
+
+  // Otherwise go directly
+  renderGif();
+}
+
+function closeGifModal(){
+  document.getElementById('gif-modal').style.display = 'none';
+}
+
+function confirmGif(){
+  closeGifModal();
+  renderGif();
+}
+
+// ── GIF Export (480px, 12fps) ──────────────────────────────
 async function renderGif(){
   if(isRecording||isPlaying)return;
   if(!parsedMessages.length){
@@ -1759,8 +1814,8 @@ async function renderGif(){
   gb.textContent='⏳ Capturing...';
   setStatus('recording','🔴 Capturing...');
 
-  // 720px wide — crisp enough for CapCut → TikTok
-  const GW=720, GH=Math.round(CV_H*(GW/CV_W));
+  // 480px wide — good balance: sharp enough for CapCut, safe for mobile RAM
+  const GW=480, GH=Math.round(CV_H*(GW/CV_W));
   const fullC=document.createElement('canvas');fullC.width=CV_PW;fullC.height=CV_PH;
   const capC=document.createElement('canvas');capC.width=GW;capC.height=GH;
   const capCtx=capC.getContext('2d');
