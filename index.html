@@ -785,13 +785,13 @@ justify-content:center; overflow:hidden; flex-shrink:0;
     </div>
 
     <div class="card">
-      <div class="card-title">🎬 Render Controls</div>
-      <div class="card-desc">Preview animasi dulu, lalu export GIF untuk dibuka di CapCut.</div>
+      <div class="card-title">🎬 Render & Export</div>
+      <div class="card-desc">Preview animasi, lalu pilih cara export ke TikTok.</div>
 
-      <!-- Device warning bar — shown by JS if needed -->
+      <!-- Device warning -->
       <div id="device-warning" style="display:none;background:rgba(234,179,8,0.1);border:1px solid rgba(234,179,8,0.3);border-radius:10px;padding:10px 12px;margin-bottom:14px;font-size:12px;color:#fbbf24;line-height:1.6">
-        <strong>⚠️ RAM HP terbatas</strong><br>
-        Disarankan pakai <strong>Short</strong> saja di HP ini. Untuk Medium/Long, buka di <strong>laptop/desktop</strong> agar tidak crash.
+        <strong>⚠️ Browser tidak support WebCodecs</strong><br>
+        Gunakan <strong>Fullscreen + Screen Record</strong> di bawah.
       </div>
 
       <div style="margin-bottom:14px;display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -803,40 +803,32 @@ justify-content:center; overflow:hidden; flex-shrink:0;
         <div class="progress-bar"><div class="progress-fill" id="progress-fill"></div></div>
       </div>
 
-      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:10px;padding:13px">
+      <!-- Preview -->
+      <button class="btn btn-primary" onclick="playPreview()" id="play-btn" style="width:100%;justify-content:center;margin-bottom:12px;padding:13px">
         ▶ Preview Animation
       </button>
 
-      <button class="btn btn-success" id="gif-btn" onclick="handleGifDownload()" style="width:100%;justify-content:center;padding:13px;font-size:14px">
-        ⬇ Download GIF (480px)
+      <!-- Export options -->
+      <div class="section-label">Export ke TikTok</div>
+
+      <!-- MP4 via WebCodecs -->
+      <button class="btn btn-success" id="mp4-btn" onclick="handleMp4Download()" style="width:100%;justify-content:center;padding:13px;font-size:14px;margin-bottom:12px">
+        ⬇ Download MP4
       </button>
 
-      <!-- Workflow guide -->
-      <div style="margin-top:14px;background:var(--surface2);border-radius:12px;padding:14px;display:flex;flex-direction:column;gap:8px">
-        <div style="font-size:11px;font-weight:700;color:var(--text-dim);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px">Workflow ke TikTok</div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">1</span>
-          <span style="font-size:12px;color:var(--text-muted)">Download GIF dari sini</span>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">2</span>
-          <span style="font-size:12px;color:var(--text-muted)">Buka <strong style="color:var(--text)">CapCut</strong> → New Project → Import GIF</span>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center">
-          <span style="background:var(--accent);color:white;width:20px;height:20px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;flex-shrink:0">3</span>
-          <span style="font-size:12px;color:var(--text-muted)">Export MP4 → Upload ke TikTok 🎉</span>
-        </div>
+      <!-- Screen record note -->
+      <div style="background:rgba(124,92,252,0.07);border:1px solid rgba(124,92,252,0.2);border-radius:10px;padding:10px 14px;font-size:12px;color:var(--text-dim);line-height:1.7">
+        💡 <strong style="color:var(--text)">Alternatif:</strong> Aktifkan screen recorder HP kamu, lalu tap ▶ Preview Animation.
       </div>
     </div>
 
-    <!-- Confirmation Modal -->
+    <!-- GIF modal (kept for fallback) -->
     <div id="gif-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:200;align-items:center;justify-content:center;padding:24px">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:18px;padding:24px;max-width:320px;width:100%">
         <div style="font-size:18px;margin-bottom:8px">⚠️ Perhatian</div>
         <div style="font-size:14px;color:var(--text-dim);line-height:1.6;margin-bottom:20px">
           Script <strong style="color:var(--text)" id="modal-length-label">Medium/Long</strong> cukup berat untuk diproses di HP.<br><br>
-          Disarankan buka di <strong style="color:var(--accent2)">laptop/desktop</strong> untuk hasil terbaik.<br><br>
-          Tetap lanjut di HP?
+          Disarankan buka di <strong style="color:var(--accent2)">laptop/desktop</strong> untuk hasil terbaik.<br><br>Tetap lanjut?
         </div>
         <div style="display:flex;gap:10px">
           <button onclick="closeGifModal()" class="btn btn-ghost" style="flex:1;justify-content:center">Batal</button>
@@ -844,6 +836,8 @@ justify-content:center; overflow:hidden; flex-shrink:0;
         </div>
       </div>
     </div>
+
+    <!-- end export card -->
   </div>
 
   <div class="phase2-right">
@@ -1489,14 +1483,13 @@ async function playPreview(){
   isPlaying=true;playbackAbort=false;
   setStatus('playing','Playing...');
   document.getElementById('play-btn').disabled=true;
-  
-  document.getElementById('gif-btn').disabled=true;
+  const mp4Btn=document.getElementById('mp4-btn');
+  if(mp4Btn) mp4Btn.disabled=true;
   await runPlayback();
   isPlaying=false;
   setStatus('done','Preview Complete');
   document.getElementById('play-btn').disabled=false;
-  
-  document.getElementById('gif-btn').disabled=false;
+  if(mp4Btn) mp4Btn.disabled=false;
 }
 
 function resetChat(){
@@ -1506,10 +1499,8 @@ function resetChat(){
   isPlaying=false;isRecording=false;
   updateProgress(0,'Waiting...');setStatus('idle','Ready');
   document.getElementById('play-btn').disabled=false;
-  
-  document.getElementById('gif-btn').disabled=false;
-  document.getElementById('gif-btn').textContent='⬇ Download GIF';
-  
+  const mp4Btn=document.getElementById('mp4-btn');
+  if(mp4Btn){mp4Btn.disabled=false;mp4Btn.textContent='⬇ Download MP4';}
 }
 
 // ── Canvas Chat Renderer ───────────────────────────────────
@@ -1765,35 +1756,152 @@ function renderFrame(canvas){
   ctx.restore();
 }
 
-// ── GIF Download Handler — device check + modal ────────────
-function handleGifDownload(){
-  if(isRecording||isPlaying)return;
+// ══════════════════════════════════════════════════════════
+// MP4 EXPORT — WebCodecs + mp4-muxer (loaded from CDN)
+// ══════════════════════════════════════════════════════════
+let mp4MuxerLoaded = false;
 
-  const isMobile = /iPhone|iPad|iPod|Android/i.test(navigator.userAgent);
-  const ram = navigator.deviceMemory || 4; // default 4 if API not supported
-  const isLowRamMobile = isMobile && ram < 4;
-  const isHeavyScript = selectedLength === 'medium' || selectedLength === 'long';
+async function loadMp4Muxer(){
+  if(mp4MuxerLoaded) return true;
+  return new Promise(resolve => {
+    const s = document.createElement('script');
+    s.src = 'https://cdn.jsdelivr.net/npm/mp4-muxer@4.4.0/build/mp4-muxer.min.js';
+    s.onload = () => { mp4MuxerLoaded = true; console.log('[MP4] mp4-muxer loaded'); resolve(true); };
+    s.onerror = () => { console.error('[MP4] Failed to load mp4-muxer'); resolve(false); };
+    document.head.appendChild(s);
+  });
+}
 
-  // Show modal if: mobile + (low RAM OR medium/long script)
-  if(isMobile && isHeavyScript){
-    const label = selectedLength === 'medium' ? 'Medium (13–18 pesan)' : 'Long (19–25 pesan)';
-    document.getElementById('modal-length-label').textContent = label;
-    document.getElementById('gif-modal').style.display = 'flex';
+function supportsWebCodecs(){
+  return typeof VideoEncoder !== 'undefined';
+}
+
+async function handleMp4Download(){
+  if(isRecording || isPlaying) return;
+  if(!parsedMessages.length){
+    const raw = document.getElementById('script-input').value;
+    if(!raw.trim()){ showToast('⚠️ Paste dan parse script dulu!'); return; }
+    parseAndPreview(); if(!parsedMessages.length) return;
+  }
+  if(!supportsWebCodecs()){
+    showToast('❌ Browser tidak support WebCodecs. Gunakan Fullscreen Mode.');
     return;
   }
 
-  // Otherwise go directly
-  renderGif();
+  const mp4Btn  = document.getElementById('mp4-btn');
+  const playBtn = document.getElementById('play-btn');
+  const fsBtn   = document.getElementById('fullscreen-btn');
+
+  // Load mp4-muxer if not yet loaded
+  setStatus('recording', '⏳ Loading encoder...');
+  mp4Btn.disabled = playBtn.disabled = fsBtn.disabled = true;
+  mp4Btn.textContent = '⏳ Loading...';
+
+  const loaded = await loadMp4Muxer();
+  if(!loaded){
+    showToast('❌ Gagal load encoder. Cek koneksi internet.');
+    setStatus('idle','Ready');
+    mp4Btn.disabled = playBtn.disabled = fsBtn.disabled = false;
+    mp4Btn.textContent = '⬇ Download MP4';
+    return;
+  }
+
+  isRecording = true; playbackAbort = false;
+  setStatus('recording','🔴 Encoding MP4...');
+  mp4Btn.textContent = '⏳ Encoding...';
+
+  // Canvas setup — render at 3× DPR
+  const W = CV_W, H = CV_H;
+  const encW = W * DPR, encH = H * DPR;
+
+  // Ensure even dimensions (H.264 requirement)
+  const safeW = encW % 2 === 0 ? encW : encW - 1;
+  const safeH = encH % 2 === 0 ? encH : encH - 1;
+
+  const renderCanvas = document.createElement('canvas');
+  renderCanvas.width = safeW;
+  renderCanvas.height = safeH;
+
+  const FPS = 30;
+  const FRAME_US = Math.round(1_000_000 / FPS); // microseconds per frame
+
+  // Init muxer
+  const { Muxer, ArrayBufferTarget } = Mp4Muxer;
+  const target = new ArrayBufferTarget();
+  const muxer = new Muxer({
+    target,
+    video: { codec:'avc', width:safeW, height:safeH },
+    fastStart: 'in-memory',
+  });
+
+  // Init encoder
+  let frameCount = 0;
+  const encoder = new VideoEncoder({
+    output: (chunk, meta) => muxer.addVideoChunk(chunk, meta),
+    error: e => console.error('[MP4] VideoEncoder error:', e),
+  });
+
+  encoder.configure({
+    codec: 'avc1.420034', // H.264 High Profile Level 5.2
+    width: safeW,
+    height: safeH,
+    bitrate: 4_000_000,
+    framerate: FPS,
+  });
+
+  console.log('[MP4] Encoder ready', safeW, 'x', safeH, '@', FPS, 'fps');
+
+  // Frame loop — renders and encodes every frame during playback
+  let frameActive = true;
+  let frameTimestamp = 0;
+
+  (async () => {
+    while(frameActive){
+      renderFrame(renderCanvas);
+      const frame = new VideoFrame(renderCanvas, {
+        timestamp: frameTimestamp,
+        duration: FRAME_US,
+      });
+      encoder.encode(frame, { keyFrame: frameCount % (FPS * 2) === 0 });
+      frame.close();
+      frameCount++;
+      frameTimestamp += FRAME_US;
+      if(frameCount % 30 === 0) console.log('[MP4] encoded frame', frameCount);
+      await new Promise(r => setTimeout(r, 1000/FPS));
+    }
+  })();
+
+  clearChat(); isPlaying = true;
+  await runPlayback();
+  await new Promise(r => setTimeout(r, 1500)); // hold last frame
+  isPlaying = false; frameActive = false;
+
+  // Wait for encoder to flush
+  setStatus('recording', '⚙️ Finalizing...');
+  mp4Btn.textContent = '⚙️ Finalizing...';
+  await encoder.flush();
+  muxer.finalize();
+
+  const { buffer } = target;
+  const blob = new Blob([buffer], { type:'video/mp4' });
+  const sizeMB = (blob.size/1024/1024).toFixed(1);
+  console.log('[MP4] Done!', sizeMB, 'MB,', frameCount, 'frames');
+
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = `chatdrama-${Date.now()}.mp4`;
+  document.body.appendChild(a); a.click(); document.body.removeChild(a);
+  setTimeout(() => URL.revokeObjectURL(url), 10000);
+
+  isRecording = false;
+  setStatus('done', '✓ MP4 Downloaded!');
+  updateProgress(100, 'Done!');
+  mp4Btn.disabled = playBtn.disabled = fsBtn.disabled = false;
+  mp4Btn.textContent = '⬇ Download MP4';
+  showToast(`✓ MP4 ${sizeMB}MB siap! Langsung upload ke TikTok 🎉`);
 }
 
-function closeGifModal(){
-  document.getElementById('gif-modal').style.display = 'none';
-}
-
-function confirmGif(){
-  closeGifModal();
-  renderGif();
-}
+// ── GIF Export (480px, kept as internal fallback) ──────────
 
 // ── GIF Export (480px, 12fps) ──────────────────────────────
 async function renderGif(){
@@ -1874,7 +1982,7 @@ async function renderGif(){
   }
 
   isRecording=false;gb.disabled=pb.disabled=false;
-  gb.textContent='⬇ Download GIF (720px)';
+  gb.textContent='⬇ Download GIF (480px)';
 }
 
 // Pure-JS GIF encoder — adaptive palette + Floyd-Steinberg dithering
@@ -2059,11 +2167,23 @@ Rania: aku screenshot percakapan ini juga ya`;
 document.addEventListener('DOMContentLoaded',()=>{
   updateHeader('Chat Preview');
   renderPhase1UI();
-  document.getElementById('contact-name').addEventListener('input',function(){updateHeader(this.value.trim()||senderB||'Chat Preview')});
+  document.getElementById('contact-name').addEventListener('input',function(){
+    updateHeader(this.value.trim()||senderB||'Chat Preview');
+  });
 
   // Fix textarea on mobile
-  const ta=document.getElementById('script-input');
+  const ta = document.getElementById('script-input');
   ta.addEventListener('touchend',e=>{e.stopPropagation();setTimeout(()=>ta.focus(),50)},{passive:true});
+
+  // WebCodecs detection
+  if(!supportsWebCodecs()){
+    // Hide MP4 button, show warning
+    document.getElementById('mp4-btn').style.display = 'none';
+    document.getElementById('device-warning').style.display = 'block';
+    console.log('[Export] WebCodecs not supported — fullscreen mode only');
+  } else {
+    console.log('[Export] WebCodecs supported ✓ — MP4 export available');
+  }
 });
 </script>
 
