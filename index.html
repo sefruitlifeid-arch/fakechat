@@ -1574,148 +1574,194 @@ function renderFrame(canvas){
   ctx.clearRect(0,0,W,H);
   ctx.fillStyle=C.bg;ctx.fillRect(0,0,W,H);
 
-  // Header
+  // ── HEADER ────────────────────────────────────────────────
   const HDR=isWA?60:110;
   ctx.fillStyle=C.hdr;ctx.fillRect(0,0,W,HDR);
 
   if(isWA){
-    // Back pill: ‹ 8
+    // Back pill ‹ 8
     ctx.fillStyle='rgba(255,255,255,0.1)';roundRect(ctx,8,HDR/2-14,44,28,14);ctx.fill();
     ctx.fillStyle=C.accent;ctx.font='15px -apple-system,sans-serif';
-    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('‹',13,HDR/2+1);
+    ctx.textAlign='left';ctx.textBaseline='middle';
+    ctx.fillText('‹',13,HDR/2+1);
     ctx.font='500 12px -apple-system,sans-serif';ctx.fillText('8',24,HDR/2+1);
-    // Avatar: profile pic if uploaded, else green circle with person SVG
-    const avX=72, avY=HDR/2, avR=18;
-    if(profilePicImage && profilePicImage.complete && profilePicImage.naturalWidth>0){
-      ctx.save();
-      ctx.beginPath();ctx.arc(avX,avY,avR,0,Math.PI*2);ctx.clip();
-      ctx.drawImage(profilePicImage,avX-avR,avY-avR,avR*2,avR*2);
-      ctx.restore();
+
+    // Avatar
+    const avX=72,avY=HDR/2,avR=18;
+    if(profilePicImage&&profilePicImage.complete&&profilePicImage.naturalWidth>0){
+      ctx.save();ctx.beginPath();ctx.arc(avX,avY,avR,0,Math.PI*2);ctx.clip();
+      ctx.drawImage(profilePicImage,avX-avR,avY-avR,avR*2,avR*2);ctx.restore();
     } else {
       drawCircle(ctx,avX,avY,avR,C.av);
-      // Person silhouette SVG path (head + body)
       ctx.fillStyle='#fff';ctx.save();ctx.translate(avX,avY);
-      ctx.beginPath();ctx.arc(0,-5,5,0,Math.PI*2);ctx.fill(); // head
-      ctx.beginPath();ctx.ellipse(0,5,7,6,0,Math.PI,Math.PI*2);ctx.fill(); // body
+      ctx.beginPath();ctx.arc(0,-5,5,0,Math.PI*2);ctx.fill();
+      ctx.beginPath();ctx.ellipse(0,5,7,6,0,Math.PI,Math.PI*2);ctx.fill();
       ctx.restore();
     }
+
     // Name + status
     ctx.fillStyle=C.hdrTxt;ctx.font='600 15px -apple-system,sans-serif';
     ctx.textAlign='left';ctx.fillText(contactName,98,HDR/2-8);
     ctx.fillStyle=C.hdrSub;ctx.font='12px -apple-system,sans-serif';
     ctx.fillText(cvTypingSender?`${cvTypingSender} typing...`:'tap here for contact info',98,HDR/2+9);
-    // Right pill with SVG video + phone icons
+
+    // Right pill — video + phone SVG (no emoji)
     ctx.fillStyle='rgba(255,255,255,0.1)';roundRect(ctx,W-78,HDR/2-14,70,28,14);ctx.fill();
-    // Video camera icon (SVG path)
-    ctx.fillStyle=C.accent;ctx.save();ctx.translate(W-58,HDR/2);
-    ctx.beginPath();ctx.roundRect(-9,-6,14,12,2);ctx.fill();
-    ctx.beginPath(); // triangle lens part
-    ctx.moveTo(6,-4);ctx.lineTo(13,-7);ctx.lineTo(13,7);ctx.lineTo(6,4);ctx.closePath();ctx.fill();
-    ctx.restore();
-    // Phone handset icon (SVG path)
-    ctx.fillStyle=C.accent;ctx.save();ctx.translate(W-24,HDR/2);ctx.scale(0.7,0.7);
+
+    // Video icon — camera body rect + triangle
+    const vx=W-58,vy=HDR/2;
+    ctx.fillStyle=C.accent;
+    roundRect(ctx,vx-9,vy-6,13,12,2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(vx+5,vy-5);ctx.lineTo(vx+12,vy-8);ctx.lineTo(vx+12,vy+8);ctx.lineTo(vx+5,vy+5);ctx.closePath();ctx.fill();
+
+    // Phone icon — simplified filled shape
+    const px2=W-26,py2=HDR/2;
+    ctx.fillStyle=C.accent;ctx.save();ctx.translate(px2,py2);ctx.scale(0.65,0.65);
     ctx.beginPath();
-    ctx.moveTo(-2,-12);ctx.bezierCurveTo(-8,-12,-12,-8,-12,-2);
-    ctx.bezierCurveTo(-12,4,-6,10,2,12);ctx.bezierCurveTo(4,13,7,12,8,10);
-    ctx.lineTo(6,6);ctx.bezierCurveTo(5,4,3,4,2,5);ctx.bezierCurveTo(0,6,-2,4,-4,2);
-    ctx.bezierCurveTo(-6,0,-4,-2,-3,-4);ctx.bezierCurveTo(-2,-5,-2,-7,-4,-8);
-    ctx.lineTo(-8,-10);ctx.bezierCurveTo(-9,-11,-2,-12,-2,-12);ctx.closePath();ctx.fill();
+    ctx.moveTo(-1,-13);ctx.bezierCurveTo(-7,-13,-13,-7,-13,-1);
+    ctx.bezierCurveTo(-13,5,-5,11,3,13);ctx.bezierCurveTo(5,14,8,12,9,10);
+    ctx.lineTo(7,6);ctx.bezierCurveTo(6,4,4,4,3,5);
+    ctx.bezierCurveTo(1,6,-1,4,-3,2);ctx.bezierCurveTo(-5,0,-3,-2,-2,-4);
+    ctx.bezierCurveTo(-1,-5,-1,-8,-3,-9);ctx.lineTo(-7,-11);
+    ctx.bezierCurveTo(-8,-12,-1,-13,-1,-13);ctx.closePath();ctx.fill();
     ctx.restore();
+
   } else {
-    ctx.fillStyle='#fff';ctx.font='26px -apple-system,sans-serif';
-    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('‹',14,60);
-    drawAvatar(ctx,W/2,50,24,avatarLetter,C.av);
-    ctx.fillStyle=C.hdrTxt;ctx.font='bold 14px -apple-system,sans-serif';
-    ctx.textAlign='center';ctx.fillText(contactName+' ›',W/2,86);
-    // iMessage video icon (SVG)
-    drawCircle(ctx,W-28,54,17,'#2c2c2e');
-    ctx.fillStyle='#007aff';ctx.save();ctx.translate(W-28,54);
-    ctx.beginPath();ctx.roundRect(-7,-5,10,10,2);ctx.fill();
-    ctx.beginPath();ctx.moveTo(4,-4);ctx.lineTo(10,-7);ctx.lineTo(10,7);ctx.lineTo(4,4);ctx.closePath();ctx.fill();
-    ctx.restore();
+    // iMessage header — back chevron left, avatar center, name, video right
+    ctx.fillStyle=C.accent;ctx.font='22px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('‹',14,55);
+
+    // Avatar center
+    const imAvX=W/2,imAvY=48,imAvR=22;
+    if(profilePicImage&&profilePicImage.complete&&profilePicImage.naturalWidth>0){
+      ctx.save();ctx.beginPath();ctx.arc(imAvX,imAvY,imAvR,0,Math.PI*2);ctx.clip();
+      ctx.drawImage(profilePicImage,imAvX-imAvR,imAvY-imAvR,imAvR*2,imAvR*2);ctx.restore();
+    } else {
+      drawCircle(ctx,imAvX,imAvY,imAvR,C.av);
+      ctx.fillStyle='#fff';ctx.font='600 14px -apple-system,sans-serif';
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText(avatarLetter,imAvX,imAvY);
+    }
+
+    // Name + chevron
+    ctx.fillStyle=C.hdrTxt;ctx.font='600 13px -apple-system,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='top';
+    ctx.fillText(contactName,W/2,78);
+    ctx.fillStyle=C.accent;ctx.font='13px -apple-system,sans-serif';
+    ctx.fillText(' ›',W/2+ctx.measureText(contactName).width/2+2,78);
+
+    // Video icon right — just SVG, no circle bg
+    const imVx=W-20,imVy=55;
+    ctx.fillStyle=C.accent;
+    roundRect(ctx,imVx-10,imVy-6,13,12,2);ctx.fill();
+    ctx.beginPath();ctx.moveTo(imVx+4,imVy-5);ctx.lineTo(imVx+11,imVy-8);ctx.lineTo(imVx+11,imVy+8);ctx.lineTo(imVx+4,imVy+5);ctx.closePath();ctx.fill();
   }
 
-  // Input bar
+  // ── INPUT BAR ─────────────────────────────────────────────
   const IB=60,IBY=H-IB;
   ctx.fillStyle=C.inBar;ctx.fillRect(0,IBY,W,IB);
+
   if(isWA){
-    // + icon (SVG strokes)
+    // + stroke icon
     ctx.strokeStyle='#8696a0';ctx.lineWidth=1.8;ctx.lineCap='round';ctx.setLineDash([]);
     ctx.beginPath();ctx.moveTo(16,IBY+22);ctx.lineTo(16,IBY+38);ctx.stroke();
     ctx.beginPath();ctx.moveTo(8,IBY+30);ctx.lineTo(24,IBY+30);ctx.stroke();
-    // Input pill
-    ctx.fillStyle=C.inBg;roundRect(ctx,32,IBY+12,W-88,36,18);ctx.fill();
+
+    // Input pill — leave space for 2 icons on right (cam + mic)
+    const pillW=W-32-52; // 32=left margin, 52=cam+mic+gaps
+    ctx.fillStyle=C.inBg;roundRect(ctx,32,IBY+12,pillW,36,18);ctx.fill();
     ctx.fillStyle='#8696a0';ctx.font='15px -apple-system,sans-serif';
-    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('Message',48,IBY+30);
-    // Sticker icon (smiley face outline) — right inside pill
-    const SX=W-62,SY=IBY+19;
-    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.3;ctx.lineCap='round';
-    ctx.beginPath();ctx.arc(SX+7,SY+7,7,0,Math.PI*2);ctx.stroke(); // circle
-    ctx.beginPath();ctx.arc(SX+5,SY+6,1,0,Math.PI*2);ctx.fill(); // left eye
-    ctx.beginPath();ctx.arc(SX+9,SY+6,1,0,Math.PI*2);ctx.fill(); // right eye
-    ctx.beginPath();ctx.arc(SX+7,SY+7,3.5,0.3,Math.PI-0.3);ctx.stroke(); // smile
-    // Camera icon (SVG path) — outside pill
-    const camX=W-46,camY=IBY+18;
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('Message',50,IBY+30);
+
+    // Sticker (smiley) inside pill right edge
+    const sx=32+pillW-22,sy=IBY+19;
+    ctx.strokeStyle='#8696a0';ctx.lineWidth=1.3;ctx.lineCap='round';ctx.setLineDash([]);
+    ctx.beginPath();ctx.arc(sx+7,sy+7,7,0,Math.PI*2);ctx.stroke();
+    ctx.fillStyle='#8696a0';
+    ctx.beginPath();ctx.arc(sx+5,sy+6,1,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+9,sy+6,1,0,Math.PI*2);ctx.fill();
+    ctx.beginPath();ctx.arc(sx+7,sy+8,3.5,0.3,Math.PI-0.3);ctx.stroke();
+
+    // Camera icon — 24px wide, positioned after pill
+    const cx=32+pillW+14,cy=IBY+30;
     ctx.strokeStyle='#8696a0';ctx.lineWidth=1.4;ctx.lineJoin='round';ctx.lineCap='round';
-    // Body
-    ctx.beginPath();roundRect(ctx,camX-9,camY+1,18,13,2.5);ctx.stroke();
-    // Lens
-    ctx.beginPath();ctx.arc(camX,camY+7.5,4,0,Math.PI*2);ctx.stroke();
-    // Bump top
-    ctx.beginPath();ctx.moveTo(camX-3,camY+1);ctx.lineTo(camX-4,camY-2);ctx.lineTo(camX+4,camY-2);ctx.lineTo(camX+3,camY+1);ctx.stroke();
-    // Mic icon (SVG path) — rightmost
-    const micX=W-18,micY=IBY+16;
+    roundRect(ctx,cx-9,cy-7,18,14,2.5);ctx.stroke();
+    ctx.beginPath();ctx.arc(cx,cy,4.5,0,Math.PI*2);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(cx-3,cy-7);ctx.lineTo(cx-5,cy-10);ctx.lineTo(cx+5,cy-10);ctx.lineTo(cx+3,cy-7);ctx.stroke();
+
+    // Mic icon — rightmost, 24px from right edge
+    const mx=W-14,my=IBY+18;
     ctx.strokeStyle='#8696a0';ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
-    ctx.beginPath();roundRect(ctx,micX-4,micY,8,11,4);ctx.stroke(); // capsule
-    ctx.beginPath();ctx.arc(micX,micY+11,7,Math.PI,0,false);ctx.stroke(); // arc
-    ctx.beginPath();ctx.moveTo(micX,micY+18);ctx.lineTo(micX,micY+22);ctx.stroke(); // stem
-    ctx.beginPath();ctx.moveTo(micX-4,micY+22);ctx.lineTo(micX+4,micY+22);ctx.stroke(); // base
+    roundRect(ctx,mx-4,my,8,11,4);ctx.stroke();
+    ctx.beginPath();ctx.arc(mx,my+11,7,Math.PI,0,false);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(mx,my+18);ctx.lineTo(mx,my+21);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(mx-4,my+21);ctx.lineTo(mx+4,my+21);ctx.stroke();
+
   } else {
-    drawCircle(ctx,26,IBY+24,16,'#2c2c2e');
-    ctx.fillStyle='#fff';ctx.font='20px -apple-system,sans-serif';ctx.textAlign='center';ctx.fillText('+',26,IBY+25);
-    ctx.fillStyle=C.inBg;roundRect(ctx,50,IBY+9,W-66,34,17);ctx.fill();
-    ctx.fillStyle='#636366';ctx.font='14px -apple-system,sans-serif';ctx.textAlign='left';ctx.fillText('iMessage',66,IBY+26);
-    ctx.font='16px -apple-system,sans-serif';ctx.textAlign='right';ctx.fillText('🎤',W-16,IBY+26);
+    // iMessage input bar — + circle, A circle, pill, voice circle
+    // + circle
+    drawCircle(ctx,22,IBY+30,14,'#3a3a3c');
+    ctx.fillStyle='#fff';ctx.font='20px -apple-system,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('+',22,IBY+31);
+
+    // A circle (App Store icon)
+    drawCircle(ctx,48,IBY+30,14,'#3a3a3c');
+    ctx.fillStyle='#fff';ctx.font='bold 13px -apple-system,sans-serif';
+    ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText('A',48,IBY+31);
+
+    // Input pill
+    ctx.fillStyle=C.inBg;roundRect(ctx,68,IBY+13,W-110,34,17);ctx.fill();
+    ctx.fillStyle='#636366';ctx.font='14px -apple-system,sans-serif';
+    ctx.textAlign='left';ctx.textBaseline='middle';ctx.fillText('iMessage',82,IBY+30);
+
+    // Voice circle (mic wave icon)
+    drawCircle(ctx,W-20,IBY+30,14,'#3a3a3c');
+    // Draw mic wave lines inside circle
+    ctx.strokeStyle='#8e8e93';ctx.lineWidth=1.5;ctx.lineCap='round';
+    const wx=W-20,wy=IBY+30;
+    // Mic body
+    roundRect(ctx,wx-3,wy-7,6,9,3);ctx.stroke();
+    ctx.beginPath();ctx.arc(wx,wy+2,5,Math.PI,0,false);ctx.stroke();
+    ctx.beginPath();ctx.moveTo(wx,wy+7);ctx.lineTo(wx,wy+9);ctx.stroke();
   }
 
-  // Chat area clip
+  // ── CHAT AREA ─────────────────────────────────────────────
   const CT=HDR+4,CB=IBY-4,CH=CB-CT;
   ctx.save();ctx.beginPath();ctx.rect(0,CT,W,CH);ctx.clip();
 
-  const FS=isWA?16:15,PX=12,PY=6,GAP=5,TAIL=7,MAX_BW=W*0.78;
+  const FS=isWA?14:15,PX=12,PY=6,GAP=5,MAX_BW=W*0.78;
   ctx.font=`${FS}px -apple-system,sans-serif`;
 
-  // Layout items
   const items=[];
   items.push({type:'div',h:24});
   for(const m of cvMessages){
-    const lines=wrapText(ctx,m.text,MAX_BW-PX*2-36);
+    const lines=wrapText(ctx,m.text,MAX_BW-PX*2-28);
     const bh=lines.length*(FS+4)+PY*2+(isWA?14:0);
     items.push({type:'msg',m,lines,h:bh+GAP,bh});
   }
   if(cvTypingSender)items.push({type:'typing',h:40+GAP});
 
-  // Render bottom-up
   let y=CB;
   for(let i=items.length-1;i>=0;i--){
     const item=items[i];y-=item.h;
     if(y+item.h<CT)break;
 
     if(item.type==='div'){
-      const label='Today';
       ctx.font='bold 12px -apple-system,sans-serif';
       ctx.fillStyle=C.divTxt;
-      ctx.textAlign='center';ctx.textBaseline='middle';ctx.fillText(label,W/2,y+12);
+      ctx.textAlign='center';ctx.textBaseline='middle';
+      ctx.fillText('Today',W/2,y+12);
 
     } else if(item.type==='typing'){
-      const bx=12+TAIL,by=y+4,bw=54,bh=32;
-      ctx.fillStyle=C.typBg;roundRect(ctx,bx,by,bw,bh,14);ctx.fill();
-      if(isWA){ctx.beginPath();ctx.moveTo(bx,by+bh-8);ctx.lineTo(bx-TAIL,by+bh);ctx.lineTo(bx+10,by+bh);ctx.closePath();ctx.fill()}
-      else{ctx.beginPath();ctx.moveTo(bx+4,by+bh);ctx.quadraticCurveTo(bx-4,by+bh,bx-TAIL,by+bh+4);ctx.quadraticCurveTo(bx,by+bh-4,bx+4,by+bh-8);ctx.closePath();ctx.fill()}
+      // No tail — full rounded rect (matches DOM)
+      const bx=10,by=y+4,bw=54,bh=32;
+      ctx.fillStyle=C.typBg;
+      roundRect(ctx,bx,by,bw,bh,isWA?12:16);ctx.fill();
       const dotY=by+bh/2,t=(Date.now()/400)%3;
       for(let d=0;d<3;d++){
-        ctx.fillStyle=isWA?`rgba(233,237,239,${d===Math.floor(t)?1:0.3})`:`rgba(150,150,160,${d===Math.floor(t)?1:0.3})`;
-        ctx.beginPath();ctx.arc(bx+12+d*14,dotY,4,0,Math.PI*2);ctx.fill();
+        const alpha=d===Math.floor(t)?0.9:0.35;
+        ctx.fillStyle=isWA?`rgba(134,150,160,${alpha})`:`rgba(142,142,147,${alpha})`;
+        ctx.beginPath();ctx.arc(bx+12+d*13,dotY,4,0,Math.PI*2);ctx.fill();
       }
 
     } else if(item.type==='msg'){
@@ -1725,66 +1771,32 @@ function renderFrame(canvas){
       const maxLW=Math.max(...lines.map(l=>ctx.measureText(l).width));
       const timeW=isWA?ctx.measureText(m.time+'  ✓✓').width+10:0;
       const bw=Math.min(Math.max(maxLW,timeW)+PX*2,MAX_BW);
-      const bx=isSent?W-bw-10-TAIL:10+TAIL;
+      // No tail offset — flush to edge (matches DOM)
+      const bx=isSent?W-bw-10:10;
       const by=y;
 
       ctx.fillStyle=isSent?C.sentBg:C.recvBg;
-      if(isWA){
-        // Sent: radius top-right=0 (sharp tail corner), others=12
-        if(isSent){
-          ctx.beginPath();
-          ctx.moveTo(bx+12,by);
-          ctx.lineTo(bx+bw,by); // top-right: sharp (radius 0)
-          ctx.lineTo(bx+bw,by+bh-12);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-12,by+bh);
-          ctx.lineTo(bx+12,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-12);
-          ctx.lineTo(bx,by+12);ctx.quadraticCurveTo(bx,by,bx+12,by);
-          ctx.closePath();ctx.fill();
-          // Tail bottom-right
-          ctx.beginPath();ctx.moveTo(bx+bw,by+bh-8);ctx.lineTo(bx+bw+TAIL,by+bh);ctx.lineTo(bx+bw-6,by+bh);ctx.closePath();ctx.fill();
-        } else {
-          // Recv: radius top-left=0 (sharp), others=12
-          ctx.beginPath();
-          ctx.moveTo(bx,by); // top-left: sharp (radius 0)
-          ctx.lineTo(bx+bw-12,by);ctx.quadraticCurveTo(bx+bw,by,bx+bw,by+12);
-          ctx.lineTo(bx+bw,by+bh-12);ctx.quadraticCurveTo(bx+bw,by+bh,bx+bw-12,by+bh);
-          ctx.lineTo(bx+12,by+bh);ctx.quadraticCurveTo(bx,by+bh,bx,by+bh-12);
-          ctx.lineTo(bx,by);
-          ctx.closePath();ctx.fill();
-          // Tail bottom-left
-          ctx.beginPath();ctx.moveTo(bx,by+bh-8);ctx.lineTo(bx-TAIL,by+bh);ctx.lineTo(bx+6,by+bh);ctx.closePath();ctx.fill();
-        }
-      } else {
-        roundRect(ctx,bx,by,bw,bh,18);ctx.fill();
-        if(isSent){ctx.beginPath();ctx.moveTo(bx+bw-4,by+bh);ctx.quadraticCurveTo(bx+bw+4,by+bh,bx+bw+TAIL,by+bh+4);ctx.quadraticCurveTo(bx+bw+2,by+bh-4,bx+bw,by+bh-10);ctx.closePath();ctx.fill()}
-        else{ctx.beginPath();ctx.moveTo(bx+4,by+bh);ctx.quadraticCurveTo(bx-4,by+bh,bx-TAIL,by+bh+4);ctx.quadraticCurveTo(bx-2,by+bh-4,bx,by+bh-10);ctx.closePath();ctx.fill()}
-      }
+      // WA: 12px radius. iMessage: 18px pill. NO tail on either.
+      roundRect(ctx,bx,by,bw,bh,isWA?12:18);ctx.fill();
 
       // Text
       ctx.fillStyle=C.txt;ctx.font=`${FS}px -apple-system,sans-serif`;
       ctx.textAlign='left';ctx.textBaseline='top';
       lines.forEach((line,li)=>ctx.fillText(line,bx+PX,by+PY+li*(FS+4)));
 
-      // WA timestamp + ticks (light text on dark bubble)
+      // WA: timestamp + ticks bottom-right
       if(isWA){
         ctx.fillStyle=C.time;ctx.font='10px -apple-system,sans-serif';
         ctx.textAlign='right';ctx.textBaseline='bottom';
-        const ty=by+bh-4;
-        ctx.fillText(m.time,bx+bw-(isSent?20:8),ty);
+        ctx.fillText(m.time,bx+bw-(isSent?20:8),by+bh-4);
         if(isSent){
-          // Draw two checkmarks
           ctx.strokeStyle=C.tick;ctx.lineWidth=1.5;ctx.lineCap='round';ctx.lineJoin='round';
           const tx=bx+bw-4,ty2=by+bh-6;
           ctx.beginPath();ctx.moveTo(tx-13,ty2-2);ctx.lineTo(tx-10,ty2+1);ctx.lineTo(tx-6,ty2-4);ctx.stroke();
           ctx.beginPath();ctx.moveTo(tx-9,ty2-2);ctx.lineTo(tx-6,ty2+1);ctx.lineTo(tx-2,ty2-4);ctx.stroke();
         }
       }
-
-      // iMessage Delivered
-      if(!isWA&&m.isLast&&isSent){
-        ctx.fillStyle='#636366';ctx.font='11px -apple-system,sans-serif';
-        ctx.textAlign='right';ctx.textBaseline='top';
-        ctx.fillText('Delivered',W-10,by+bh+2);
-      }
+      // iMessage: no timestamp, no ticks, no Delivered
     }
   }
   ctx.restore();
